@@ -19,7 +19,7 @@ export function ToolPanel(props) {
 
 	return (
 		<div id="mainToolPanel">
-			{props.toolList.map(tool => <ToolIcon tool={tool} onClick={() => onToolClick(tool)} />)}
+			{props.toolList.map((tool, index) => <ToolIcon key={String(index)} tool={tool} onClick={() => onToolClick(tool)} />)}
 		</div>
 	)
 }
