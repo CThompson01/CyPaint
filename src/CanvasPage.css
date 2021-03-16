@@ -1,3 +1,8 @@
+#canvasPageContainer {
+	display: flex;
+	flex-direction: row;
+}
+
 #mainCanvas {
 	width: 600px;
 	height: 400px;
