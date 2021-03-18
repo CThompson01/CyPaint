@@ -1,4 +1,4 @@
-import './ToolIcon.css';
+import './ToolIcon.css'
 
 /**
  * Tool Icon

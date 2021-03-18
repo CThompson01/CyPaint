@@ -1,5 +1,5 @@
-import './ToolPanel.css';
-import { ToolIcon } from './ToolIcon';
+import './ToolPanel.css'
+import { ToolIcon } from './ToolIcon'
 
 /**
  * Tool Panel
@@ -14,7 +14,7 @@ export function ToolPanel(props) {
 	 * @param {Tool} tool the tool that was pressed
 	 */
 	function onToolClick(tool) {
-		props.setCurrentTool(tool);
+		props.setCurrentTool(tool)
 	}
 
 	return (

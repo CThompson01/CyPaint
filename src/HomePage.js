@@ -9,7 +9,7 @@ export function HomePage(props) {
 		<div id="homePageContainer">
 			<span>CyPaint</span>
 			<br />
-			<button onClick={props.createBlankCanvas}>Create Blank Canvas</button>
+			<button id="create-blank-canvas-button" onClick={props.createBlankCanvas}>Create Blank Canvas</button>
 		</div>
 	)
 }

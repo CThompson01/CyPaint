@@ -1,7 +1,7 @@
-import './App.css';
-import { useState } from 'react';
-import { CanvasPage } from './CanvasPage';
-import { HomePage } from './HomePage';
+import './App.css'
+import { useState } from 'react'
+import { CanvasPage } from './CanvasPage'
+import { HomePage } from './HomePage'
 
 function App() {
 	const [currentPage, setCurrentPage] = useState('home')
@@ -17,4 +17,4 @@ function App() {
 	);
 }
 
-export default App;
+export default App
