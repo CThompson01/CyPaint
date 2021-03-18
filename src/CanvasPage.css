@@ -1,0 +1,8 @@
+#canvasPageContainer {
+	display: flex;
+	flex-direction: row;
+}
+
+#mainCanvas {
+	border: 1px solid black;
+}
