@@ -10,6 +10,11 @@ export class Tool {
 	name
 
 	/**
+	 * Unique id of tool
+	 */
+	id
+
+	/**
 	 * Method fired when the mouse is released on the canvas
 	 * @param {object} mousePos mouse position
 	 * @param {string} color selected color

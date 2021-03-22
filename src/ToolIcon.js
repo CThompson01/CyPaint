@@ -7,7 +7,7 @@ import './ToolIcon.css'
  */
 export function ToolIcon(props) {
 	return (
-		<div className="ToolIcon" onClick={props.onClick}>
+		<div className="ToolIcon" id={props.tool.id} onClick={props.onClick}>
 			<img src={props.tool.icon} width="20" height="20" alt={props.tool.name} />
 		</div>
 	)
