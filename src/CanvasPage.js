@@ -2,12 +2,14 @@ import './CanvasPage.css';
 import { useEffect, useRef, useState } from 'react';
 import { ToolPanel } from './ToolPanel';
 import { PencilTool } from './pencilTool';
+import { EraserTool } from './eraserTool';
 
 /**
  * An instance of each tool
  */
  const tools = [
-	new PencilTool()
+	new PencilTool(),
+	new EraserTool()
 ]
 
 const CANVAS_WIDTH = 600;
