@@ -25,11 +25,11 @@ const CANVAS_HEIGHT = 400;
  * Canvas Page
  */
 export function CanvasPage() {
-	const [currentTool, setCurrentTool] = useState(tools[0]);
-	const [mouseDown, setMouseDown] = useState(false);
-	const [color] = useState('black');
-	const canvasRef = useRef();
-	const ctx =  canvasRef.current?.getContext('2d');
+  const [currentTool, setCurrentTool] = useState(tools[0]);
+  const [mouseDown, setMouseDown] = useState(false);
+  const [color] = useState("black");
+  const canvasRef = useRef();
+  const ctx = canvasRef.current?.getContext("2d");
 
 	useEffect(() => {
 		if (!!ctx) {
@@ -37,36 +37,65 @@ export function CanvasPage() {
 		}
 	}, [ctx, color]);
 
-	function onMouseUp(e) {
-		setMouseDown(false);
-		currentTool.onMouseUp({x: e.pageX - 200, y: e.pageY}, ctx);
-	}
+  function onMouseUp(e) {
+    setMouseDown(false);
+    currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx);
+  }
 
-	function onMouseDown(e) {
-		setMouseDown(true);
-		currentTool.onMouseDown({x: e.pageX - 200, y: e.pageY}, ctx);
-	}
+  function onMouseDown(e) {
+    setMouseDown(true);
+    currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx);
+  }
 
-	function onMouseMove(e) {
-		if (mouseDown) {
-			currentTool.onMouseMove({x: e.pageX - 200, y: e.pageY}, ctx);
-		}
-	}
+  function onMouseMove(e) {
+    if (mouseDown) {
+      currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
+    }
+  }
+  function handleImage(e) {
+    var img = new Image();
+    img.onload = draw;
+    img.src = URL.createObjectURL(e.target.files[0]);
+  }
+  function draw() {
+    var ctx = canvasRef.current.getContext("2d");
+    ctx.drawImage(this, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+  function download(){
+	var canvas = document.getElementById('mainCanvas');
+	const image = canvas.toDataURL();
+	const link = document.createElement('a');
+	link.href = image;
+	link.download = 'image.png';
+	link.click();
+  }
 
-	return (
-		<div id="canvasPageContainer">
-			<ToolPanel
-				currentTool={currentTool}
-				toolList={tools}
-				setCurrentTool={setCurrentTool} />
-			<canvas
-				id="mainCanvas"
-				ref={canvasRef}
-				width={CANVAS_WIDTH}
-				height={CANVAS_HEIGHT}
-				onMouseUp={onMouseUp}
-				onMouseDown={onMouseDown}
-				onMouseMove={onMouseMove} />
-		</div>
-	)
+
+  return (
+    <div id="canvasPageContainer">
+      <ToolPanel
+        currentTool={currentTool}
+        toolList={tools}
+        setCurrentTool={setCurrentTool}
+      />
+      <canvas
+        id="mainCanvas"
+        ref={canvasRef}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+        onMouseUp={onMouseUp}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+      />
+      <div>
+        <input
+          type="file"
+          id="file"
+          accept="image/*"
+          onChange={handleImage}
+        ></input>
+		<button onClick = {download}>Download</button>
+      </div>
+    </div>
+  );
 }
