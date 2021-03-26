@@ -36,8 +36,7 @@ export class TriangleTool extends Tool {
 			ctx.moveTo(markers.startX, markers.top);
 			ctx.lineTo(markers.startX, markers.bottom);
 			ctx.lineTo(markers.endX, markers.bottom);
-			// ctx.fill(); broken for some reason check back later
-			ctx.stroke();
+			ctx.fill();
 
 			markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
 		}

@@ -33,7 +33,7 @@ export function CanvasPage() {
 
 	useEffect(() => {
 		if (!!ctx) {
-			ctx.fill = color;
+			ctx.fillStyle = color;
 		}
 	}, [ctx, color]);
 

@@ -15,8 +15,7 @@ export class CircleTool extends Tool {
             let radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2))
             ctx.beginPath()
             ctx.arc(originPoint[0], originPoint[1], radius, 0, 2*Math.PI)
-            // ctx.fill() broken for some reason check back later
-            ctx.stroke()
+            ctx.fill()
             originPoint = [-1,-1]
         }
     }
