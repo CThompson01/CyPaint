@@ -1,13 +1,22 @@
-import "./CanvasPage.css";
-import { useEffect, useRef, useState } from "react";
-import { ToolPanel } from "./ToolPanel";
-import { PencilTool } from "./pencilTool";
-import { EraserTool } from "./eraserTool";
+import './CanvasPage.css';
+import { useEffect, useRef, useState } from 'react';
+import { ToolPanel } from './ToolPanel';
+import { PencilTool } from './pencilTool';
+import { EraserTool } from './eraserTool';
+import { SquareTool } from './squareTool';
+import { CircleTool } from './circleTool';
+import { TriangleTool } from './triangleTool';
 
 /**
  * An instance of each tool
  */
-const tools = [new PencilTool(), new EraserTool()];
+export const tools = [
+	new PencilTool(),
+	new EraserTool(),
+	new SquareTool(),
+	new CircleTool(),
+	new TriangleTool()
+]
 
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
@@ -22,11 +31,11 @@ export function CanvasPage() {
   const canvasRef = useRef();
   const ctx = canvasRef.current?.getContext("2d");
 
-  useEffect(() => {
-    if (!!ctx) {
-      ctx.fill = color;
-    }
-  }, [ctx, color]);
+	useEffect(() => {
+		if (!!ctx) {
+			ctx.fillStyle = color;
+		}
+	}, [ctx, color]);
 
   function onMouseUp(e) {
     setMouseDown(false);
