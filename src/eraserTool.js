@@ -6,7 +6,7 @@ export class EraserTool extends Tool {
     name = 'Eraser Tool'
     id = 'tool.eraser'
 
-    onMouseMove(mousePos,color, ctx) {
-        ctx.clearRect(mousePos.x, mousePos.y, 1, 1)
+    onMouseMove(mousePos, ctx) {
+			ctx.clearRect(mousePos.x, mousePos.y, 1, 1)
     }
 }

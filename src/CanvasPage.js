@@ -10,7 +10,7 @@ import { TriangleTool } from './triangleTool';
 /**
  * An instance of each tool
  */
- const tools = [
+export const tools = [
 	new PencilTool(),
 	new EraserTool(),
 	new SquareTool(),

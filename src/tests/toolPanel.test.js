@@ -2,6 +2,7 @@ import { mount } from 'enzyme'
 import { CanvasPage } from '../CanvasPage'
 import { ToolIcon } from '../ToolIcon'
 import { ToolPanel } from '../ToolPanel'
+import { tools } from '../CanvasPage'
 
 describe('Tool Panel', () => {
 	it('displays on screen', () => {
@@ -10,7 +11,7 @@ describe('Tool Panel', () => {
 		expect(toolPanel.length).toBeGreaterThanOrEqual(1) // Tool Panel visible on screen
 	})
 
-	it('switches active tool', () => {
+	it('sets pencil to active tool', () => {
 		const wrapper = mount(<CanvasPage />)
 		const toolPanel = wrapper.find(ToolPanel)
 		const pencilTool = toolPanel.find(ToolIcon).first()
@@ -18,27 +19,30 @@ describe('Tool Panel', () => {
 		expect(toolPanel.prop('currentTool').id).toBe('tool.pencil')
 	})
 
-	it('switches active tool', () => {
-		const wrapper = mount(<CanvasPage />)
-		const toolPanel = wrapper.find(ToolPanel)
-		const squareTool = toolPanel.find(ToolIcon)[2]
-		squareTool.simulate('click')
-		expect(toolPanel.prop('currentTool').id).toBe('tool.square')
+	it('sets square to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(2).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "square.svg", "id": "tool.square", "name": "Square Tool"})
 	})
 
-	it('switches active tool', () => {
-		const wrapper = mount(<CanvasPage />)
-		const toolPanel = wrapper.find(ToolPanel)
-		const circleTool = toolPanel.find(ToolIcon)[3]
-		circleTool.simulate('click')
-		expect(toolPanel.prop('currentTool').id).toBe('tool.circle')
+	it('sets circle to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(3).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "circle.svg", "id": "tool.circle", "name": "Circle Tool"})
 	})
 
-	it('switches active tool', () => {
-		const wrapper = mount(<CanvasPage />)
-		const toolPanel = wrapper.find(ToolPanel)
-		const triangleTool = toolPanel.find(ToolIcon)[4]
-		triangleTool.simulate('click')
-		expect(toolPanel.prop('currentTool').id).toBe('tool.triangle')
+	it('sets triangle to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(4).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "triangle.svg", "id": "tool.triangle", "name": "Triangle Tool"})
 	})
 })

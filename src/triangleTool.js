@@ -25,7 +25,7 @@ export class TriangleTool extends Tool {
 			markers.clicks++;
 		} else {
 			console.log("End Markers")
-			if (markers.endX == -1) {
+			if (markers.endX === -1) {
 				markers.endX = mousePos.x
 			} else {
 				markers.bottom = markers.top
