@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from 'react';
 import { ToolPanel } from './ToolPanel';
 import { PencilTool } from './pencilTool';
 import { EraserTool } from './eraserTool';
+import { SquareTool } from './squareTool';
+import { CircleTool } from './circleTool';
+import { TriangleTool } from './triangleTool';
 
 /**
  * An instance of each tool
  */
  const tools = [
 	new PencilTool(),
-	new EraserTool()
+	new EraserTool(),
+	new SquareTool(),
+	new CircleTool(),
+	new TriangleTool()
 ]
 
 const CANVAS_WIDTH = 600;
@@ -27,7 +33,7 @@ export function CanvasPage() {
 
 	useEffect(() => {
 		if (!!ctx) {
-			ctx.fill = color;
+			ctx.fillStyle = color;
 		}
 	}, [ctx, color]);
 

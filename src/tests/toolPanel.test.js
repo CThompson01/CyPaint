@@ -17,4 +17,28 @@ describe('Tool Panel', () => {
 		pencilTool.simulate('click')
 		expect(toolPanel.prop('currentTool').id).toBe('tool.pencil')
 	})
+
+	it('switches active tool', () => {
+		const wrapper = mount(<CanvasPage />)
+		const toolPanel = wrapper.find(ToolPanel)
+		const squareTool = toolPanel.find(ToolIcon)[2]
+		squareTool.simulate('click')
+		expect(toolPanel.prop('currentTool').id).toBe('tool.square')
+	})
+
+	it('switches active tool', () => {
+		const wrapper = mount(<CanvasPage />)
+		const toolPanel = wrapper.find(ToolPanel)
+		const circleTool = toolPanel.find(ToolIcon)[3]
+		circleTool.simulate('click')
+		expect(toolPanel.prop('currentTool').id).toBe('tool.circle')
+	})
+
+	it('switches active tool', () => {
+		const wrapper = mount(<CanvasPage />)
+		const toolPanel = wrapper.find(ToolPanel)
+		const triangleTool = toolPanel.find(ToolIcon)[4]
+		triangleTool.simulate('click')
+		expect(toolPanel.prop('currentTool').id).toBe('tool.triangle')
+	})
 })
