@@ -6,6 +6,7 @@ import { EraserTool } from './eraserTool';
 import { SquareTool } from './squareTool';
 import { CircleTool } from './circleTool';
 import { TriangleTool } from './triangleTool';
+import { LayerPanel } from './LayerPanel';
 
 /**
  * An instance of each tool
@@ -72,30 +73,33 @@ export function CanvasPage() {
 
 
   return (
-    <div id="canvasPageContainer">
-      <ToolPanel
-        currentTool={currentTool}
-        toolList={tools}
-        setCurrentTool={setCurrentTool}
-      />
-      <canvas
-        id="mainCanvas"
-        ref={canvasRef}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        onMouseUp={onMouseUp}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-      />
-      <div>
-        <input
-          type="file"
-          id="file"
-          accept="image/*"
-          onChange={handleImage}
-        ></input>
-		<button onClick = {download}>Download</button>
-      </div>
-    </div>
+		<div>
+			<div id="canvasPageContainer">
+				<ToolPanel
+					currentTool={currentTool}
+					toolList={tools}
+					setCurrentTool={setCurrentTool}
+				/>
+				<canvas
+					id="mainCanvas"
+					ref={canvasRef}
+					width={CANVAS_WIDTH}
+					height={CANVAS_HEIGHT}
+					onMouseUp={onMouseUp}
+					onMouseDown={onMouseDown}
+					onMouseMove={onMouseMove}
+				/>
+				<div>
+					<input
+						type="file"
+						id="file"
+						accept="image/*"
+						onChange={handleImage}
+					></input>
+			<button onClick = {download}>Download</button>
+				</div>
+			</div>
+			<LayerPanel />
+		</div>
   );
 }
