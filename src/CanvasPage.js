@@ -7,6 +7,7 @@ import { SquareTool } from './squareTool';
 import { CircleTool } from './circleTool';
 import { TriangleTool } from './triangleTool';
 import { LayerPanel } from './LayerPanel';
+import { Layer } from './layer';
 
 /**
  * An instance of each tool
@@ -29,6 +30,7 @@ export function CanvasPage() {
   const [currentTool, setCurrentTool] = useState(tools[0]);
   const [mouseDown, setMouseDown] = useState(false);
   const [color] = useState("black");
+	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
   const canvasRef = useRef();
   const ctx = canvasRef.current?.getContext("2d");
 
@@ -53,6 +55,43 @@ export function CanvasPage() {
       currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
     }
   }
+
+	function layerToggleVisbility(index) {
+
+	}
+
+	function layerUp(index) {
+		if (index === 0) return
+		setLayerList(oldLayerList => {
+			const newLayerList = [...oldLayerList]
+
+			// Swap layer[index] and layer[index-1]
+			const tmp = newLayerList[index-1]
+			newLayerList[index-1] = newLayerList[index]
+			newLayerList[index] = tmp
+
+			return newLayerList
+		})
+	}
+
+	function layerDown(index) {
+		if (index === layerList.length - 1) return
+		setLayerList(oldLayerList => {
+			const newLayerList = [...oldLayerList]
+
+			// Swap layer[index] and layer[index+1]
+			const tmp = newLayerList[index+1]
+			newLayerList[index+1] = newLayerList[index]
+			newLayerList[index] = tmp
+
+			return newLayerList
+		})
+	}
+
+	function layerDelete(index) {
+
+	} 
+
   function handleImage(e) {
     var img = new Image();
     img.onload = draw;
@@ -99,7 +138,12 @@ export function CanvasPage() {
 			<button onClick = {download}>Download</button>
 				</div>
 			</div>
-			<LayerPanel />
+			<LayerPanel
+				layers={layerList}
+				toggleVisbility={layerToggleVisbility}
+				up={layerUp}
+				down={layerDown}
+				delete={layerDelete} />
 		</div>
   );
 }
