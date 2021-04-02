@@ -2,7 +2,6 @@ import './LayerPanel.css'
 import { LayerRow } from './LayerRow'
 
 /**
- * 
  * @param {Layer} props.layers the layers to display
  */
 export const LayerPanel = props => {
@@ -12,7 +11,6 @@ export const LayerPanel = props => {
 				<LayerRow
 					layer={layer}
 					key={String(index)}
-					toggleVisbility={() => props.toggleVisbility(index)}
 					up={() => props.up(index)}
 					down={() => props.down(index)}
 					delete={() => props.delete(index)} />

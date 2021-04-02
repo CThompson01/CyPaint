@@ -56,40 +56,42 @@ export function CanvasPage() {
     }
   }
 
-	function layerToggleVisbility(index) {
-
-	}
-
 	function layerUp(index) {
 		if (index === 0) return
 		setLayerList(oldLayerList => {
-			const newLayerList = [...oldLayerList]
+			const newLayerList = [...oldLayerList];
 
 			// Swap layer[index] and layer[index-1]
-			const tmp = newLayerList[index-1]
-			newLayerList[index-1] = newLayerList[index]
-			newLayerList[index] = tmp
+			const tmp = newLayerList[index-1];
+			newLayerList[index-1] = newLayerList[index];
+			newLayerList[index] = tmp;
 
-			return newLayerList
+			return newLayerList;
 		})
 	}
 
 	function layerDown(index) {
 		if (index === layerList.length - 1) return
 		setLayerList(oldLayerList => {
-			const newLayerList = [...oldLayerList]
+			const newLayerList = [...oldLayerList];
 
 			// Swap layer[index] and layer[index+1]
-			const tmp = newLayerList[index+1]
-			newLayerList[index+1] = newLayerList[index]
-			newLayerList[index] = tmp
+			const tmp = newLayerList[index+1];
+			newLayerList[index+1] = newLayerList[index];
+			newLayerList[index] = tmp;
 
-			return newLayerList
+			return newLayerList;
 		})
 	}
 
 	function layerDelete(index) {
+		setLayerList(oldLayerList => {
+			const newLayerList = [...oldLayerList];
 
+			newLayerList.splice(index, 1);
+
+			return newLayerList;
+		})
 	} 
 
   function handleImage(e) {
@@ -140,7 +142,6 @@ export function CanvasPage() {
 			</div>
 			<LayerPanel
 				layers={layerList}
-				toggleVisbility={layerToggleVisbility}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />
