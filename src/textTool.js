@@ -1,50 +1,44 @@
+import React from "react";
 import text from "./text.svg";
 import { Tool } from "./tool";
-var originPoint = [-1, -1];
-var x = 0;
-var count = 0;
-var words = [];
-const  f = function textW(e,ctx){
-    ctx.font = "16px Arial"
-
-    if(e.key == "Backspace"){
-        var tmp = words.pop();
-        if(originPoint[0]>ctx.measureText(tmp).width){
-            originPoint[0] -= ctx.measureText(tmp).width;
-            console.log( ctx.measureText(tmp).width);
-        }else{
-            originPoint[0] = x;
-        }
-        if(count>0){
-            count--;
-        }
-        console.log(count);
-    }
-    else if(e.key == "Enter"){
-        originPoint[0] = x;
-        originPoint[1] += 20;
-    }else{
-        words.push(e.key);
-        ctx.fillText(e.key,originPoint[0], originPoint[1])
-        originPoint[0] += ctx.measureText(e.key).width;
-        console.log(e.key);
-    }
-  };
-
+var hasInput = false;
+var font = "14px sans-serif";
 
 export class TextTool extends Tool {
   icon = text;
   name = "Text Tool";
   id = "tool.text";
-  
 
   onMouseDown(mousePos, ctx) {
-    originPoint = [mousePos.x, mousePos.y];
-    x = originPoint[0];
-    words = [];
-    console.log(document.removeEventListener("keydown",(e) =>f(e,ctx),false));
-    document.addEventListener("keydown",(e) =>f(e,ctx), true);
-    document.removeEventListener("keydown",f, true);
-    
+    if (hasInput) return;
+    ctx.font = font;
+    var input = document.createElement("input");
+
+    input.type = "text";
+    input.style.position = "fixed";
+    input.style.left = mousePos.x+200 + "px";
+    input.style.top = mousePos.y + "px";
+
+    input.onkeydown = (e) => {
+      var key = e.key;
+      if (key === "Enter") {
+        {
+          ctx.textBaseline = "top";
+          ctx.textAlign = "left";
+          ctx.font = font;
+          ctx.fillText(input.value,mousePos.x, mousePos.y);
+        };
+        document.body.removeChild(input);
+        hasInput = false;
+      }
+    };
+
+    document.body.appendChild(input);
+
+    input.focus();
+
+    hasInput = true;
   }
+
+  
 }
