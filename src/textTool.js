@@ -1,4 +1,3 @@
-import React from "react";
 import text from "./text.svg";
 import { Tool } from "./tool";
 var hasInput = false;
@@ -16,7 +15,7 @@ export class TextTool extends Tool {
 
     input.type = "text";
     input.style.position = "fixed";
-    input.style.left = mousePos.x+200 + "px";
+    input.style.left = mousePos.x + 200 + "px";
     input.style.top = mousePos.y + "px";
 
     input.onkeydown = (e) => {
@@ -26,8 +25,8 @@ export class TextTool extends Tool {
           ctx.textBaseline = "top";
           ctx.textAlign = "left";
           ctx.font = font;
-          ctx.fillText(input.value,mousePos.x, mousePos.y);
-        };
+          ctx.fillText(input.value, mousePos.x, mousePos.y);
+        }
         document.body.removeChild(input);
         hasInput = false;
       }
@@ -39,6 +38,4 @@ export class TextTool extends Tool {
 
     hasInput = true;
   }
-
-  
 }
