@@ -1,7 +1,5 @@
 import text from "./text.svg";
 import { Tool } from "./tool";
-import React from 'react'
-
 var originPoint = [-1, -1];
 var x = 0;
 var count = 0;
@@ -15,7 +13,7 @@ const  f = function textW(e,ctx){
             originPoint[0] -= ctx.measureText(tmp).width;
             console.log( ctx.measureText(tmp).width);
         }else{
-            originPoint[0] = 0;
+            originPoint[0] = x;
         }
         if(count>0){
             count--;
@@ -38,6 +36,7 @@ export class TextTool extends Tool {
   icon = text;
   name = "Text Tool";
   id = "tool.text";
+  
 
   onMouseDown(mousePos, ctx) {
     originPoint = [mousePos.x, mousePos.y];
