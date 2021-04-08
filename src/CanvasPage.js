@@ -31,6 +31,7 @@ export function CanvasPage() {
   const [mouseDown, setMouseDown] = useState(false);
   const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
+	const [selectedLayerIdx, setSelectedLayerIdx] = useState(0)
   const canvasRef = useRef();
   const ctx = canvasRef.current?.getContext("2d");
 
@@ -142,6 +143,8 @@ export function CanvasPage() {
 			</div>
 			<LayerPanel
 				layers={layerList}
+				selected={selectedLayerIdx}
+				setActiveLayer={setSelectedLayerIdx}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />
