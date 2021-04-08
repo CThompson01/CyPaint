@@ -8,12 +8,18 @@ export class TriangleTool extends Tool {
 	name = 'Triangle Tool'
 	id = 'tool.triangle'
 
+	deactivate() {
+		super.deactivate();
+		markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
+	}
+
 	onMouseDown(mousePos, ctx) {
 		if (markers.clicks === -1) {
 			console.log("Start markers")
 			markers.top = mousePos.y
 			markers.startX = mousePos.x
 			markers.clicks++
+			this.beginLayerEdit();
 		} else if (markers.clicks === 0) {
 			console.log("Mid Markers")
 			if (Math.abs(mousePos.y - markers.top) > Math.abs(mousePos.x - markers.startX)) {
@@ -37,6 +43,7 @@ export class TriangleTool extends Tool {
 			ctx.lineTo(markers.startX, markers.bottom);
 			ctx.lineTo(markers.endX, markers.bottom);
 			ctx.fill();
+			this.endLayerEdit();
 
 			markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
 		}

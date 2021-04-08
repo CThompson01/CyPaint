@@ -6,7 +6,15 @@ export class PencilTool extends Tool {
 	name = 'Pencil Tool'
 	id = 'tool.pencil'
 
+	onMouseDown(mousePos, ctx) {
+		this.beginLayerEdit();
+	}
+
 	onMouseMove(mousePos, ctx) {
-		ctx.fillRect(mousePos.x, mousePos.y, 1, 1)
+		ctx.fillRect(mousePos.x, mousePos.y, 1, 1);
+	}
+
+	onMouseUp(mousePos, ctx) {
+		this.endLayerEdit();
 	}
 }
