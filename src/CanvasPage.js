@@ -1,5 +1,5 @@
 import './CanvasPage.css';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ToolPanel } from './ToolPanel';
 import { PencilTool } from './pencilTool';
 import { EraserTool } from './eraserTool';
@@ -183,6 +183,14 @@ export function CanvasPage() {
 	link.click();
   }
 
+	const updateCurrentTool = useCallback(tool => {
+		setCurrentTool(oldTool => {
+			// Clear old tool
+			oldTool.deactivate();
+
+			return tool;
+		});
+	}, [setCurrentTool])
 
   return (
 		<div>
@@ -190,7 +198,7 @@ export function CanvasPage() {
 				<ToolPanel
 					currentTool={currentTool}
 					toolList={tools}
-					setCurrentTool={setCurrentTool}
+					setCurrentTool={updateCurrentTool}
 				/>
 				<canvas
 					id="mainCanvas"

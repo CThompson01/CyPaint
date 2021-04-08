@@ -14,8 +14,14 @@ export class Tool {
 	 */
 	id
 
+	/**
+	 * Listener to layer modification beginning
+	 */
 	begin
 
+	/**
+	 * Listener to layer modification ending
+	 */
 	end
 
 	/**
@@ -47,6 +53,13 @@ export class Tool {
 	 */
 	endLayerEdit() {
 		this.end();
+	}
+
+	/**
+	 * Called by canvas when this tool is being switched away from
+	 */
+	deactivate() {
+		this.endLayerEdit();
 	}
 
 	/**
