@@ -3,7 +3,7 @@ import { LayerRow } from './LayerRow'
 
 /**
  * @param {Layer} props.layers the layers to display
- * @param {function} props.setActiveLayer callback fired with index
+ * @param {function} props.setActiveLayer callback fired with id
  */
 export const LayerPanel = props => {
 	return (
@@ -12,8 +12,8 @@ export const LayerPanel = props => {
 				<LayerRow
 					layer={layer}
 					key={String(index)}
-					selected={props.selected === index}
-					onSelect={() => props.setActiveLayer(index)}
+					selected={props.selected === layer.id}
+					onSelect={() => props.setActiveLayer(layer.id)}
 					up={() => props.up(index)}
 					down={() => props.down(index)}
 					delete={() => props.delete(index)} />

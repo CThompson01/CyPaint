@@ -31,7 +31,7 @@ export function CanvasPage() {
   const [mouseDown, setMouseDown] = useState(false);
   const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [selectedLayerIdx, setSelectedLayerIdx] = useState(0)
+	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
   const canvasRef = useRef();
   const ctx = canvasRef.current?.getContext("2d");
 
@@ -56,6 +56,14 @@ export function CanvasPage() {
       currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
     }
   }
+
+	useEffect(() => {
+		if (mouseDown) {
+			// TODO Only show active layer
+		} else {
+			// TODO Show all layers
+		}
+	}, [mouseDown, activeLayerId])
 
 	function layerUp(index) {
 		if (index === 0) return
@@ -143,8 +151,8 @@ export function CanvasPage() {
 			</div>
 			<LayerPanel
 				layers={layerList}
-				selected={selectedLayerIdx}
-				setActiveLayer={setSelectedLayerIdx}
+				selected={activeLayerId}
+				setActiveLayer={setActiveLayerId}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />

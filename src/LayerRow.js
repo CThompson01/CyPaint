@@ -9,9 +9,10 @@
  */
 export const LayerRow = props => (
 	<div
-		style={{display: 'flex', flexDirection: 'row', backgroundColor: props.selected ? 'gray' : 'white'}}
-		onClick={props.onSelect}>
-		<p style={{flex: 1, color: 'black', fontSize: 20}}>{props.layer.name}</p>
+		style={{display: 'flex', flexDirection: 'row', backgroundColor: props.selected ? 'gray' : 'white'}}>
+		<div style={{display: 'flex', flex: 1}} onClick={props.onSelect}>
+			<p style={{flex: 1, color: 'black', fontSize: 20}}>{props.layer.name}</p>
+		</div>
 		<button onClick={props.up}>Up</button>
 		<button onClick={props.down}>Down</button>
 		<button onClick={props.delete}>Del</button>
