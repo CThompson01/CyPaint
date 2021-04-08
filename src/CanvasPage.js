@@ -103,6 +103,29 @@ export function CanvasPage() {
 		}
 	}, [mouseDown])
 
+	useEffect(() => {
+		if (!ctx) return;
+
+		// Show all layers
+		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+		for (let i = layerList.length-1; i >= 0; i--) {
+			// Copy data from this layer to `blank`
+			for (let x = 0; x < CANVAS_WIDTH; x++) {
+				for (let y = 0; y < CANVAS_HEIGHT; y++) {
+					let pos = ((y * CANVAS_WIDTH) + x) * 4;
+					if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos];
+					}
+				}
+			}
+		}
+
+		ctx.putImageData(blank, 0, 0);
+	}, [layerList])
+
 	function layerUp(index) {
 		if (index === 0) return
 		setLayerList(oldLayerList => {
