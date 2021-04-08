@@ -14,6 +14,41 @@ export class Tool {
 	 */
 	id
 
+	begin
+
+	end
+
+	/**
+	 * Register functions to receive layer updates from this tool
+	 * @param {function} begin callback fired when this tool begins to edit the canvas
+	 * @param {function} end callback fired when this tool ends edits to the canvas
+	 * @returns {function} callback to unsubscribe as a listener
+	 */
+	subscribeToLayerEdits(begin, end) {
+		this.begin = begin
+		this.end = end
+
+		return () => {
+			this.begin = undefined
+			this.end = undefined
+		}
+	}
+
+	/**
+	 * Called when the tool begins performing a modification to the layer.
+	 */
+	beginLayerEdit() {
+		this.begin();
+	}
+
+	/**
+	 * Called when the tool is done performing a modification to the layer
+	 * and the edits can be flushed.
+	 */
+	endLayerEdit() {
+		this.end();
+	}
+
 	/**
 	 * Method fired when the mouse is released on the canvas
 	 * @param {object} mousePos mouse position

@@ -42,6 +42,40 @@ export function CanvasPage() {
 	}, [ctx, color]);
 
 	useEffect(() => {
+		if (!ctx) return;
+
+		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
+
+		// Subscribe to tool's layer edit callback
+		return currentTool.subscribeToLayerEdits(() => {
+			// Only show active layer
+			ctx.putImageData(activeLayer.imageData, 0, 0);
+		}, () => {
+			// Load current ctx image data into active layer
+			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+			// Show all layers
+			const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+			for (let i = layerList.length-1; i >= 0; i--) {
+				// Copy data from this layer to `blank`
+				for (let x = 0; x < CANVAS_WIDTH; x++) {
+					for (let y = 0; y < CANVAS_HEIGHT; y++) {
+						let pos = ((y * CANVAS_WIDTH) + x) * 4;
+						if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos];
+						}
+					}
+				}
+			}
+
+			ctx.putImageData(blank, 0, 0);
+		})
+	}, [ctx, currentTool, activeLayerId])
+
+	useEffect(() => {
 		if (!!ctx) {
 			// Context loaded for first time. Load empty image data into all layers
 			ctx.putImageData(ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
@@ -69,39 +103,6 @@ export function CanvasPage() {
       currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
     }
   }
-
-	useEffect(() => {
-		if (!ctx) return;
-
-		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
-
-		if (mouseDown) {
-			// Only show active layer
-			ctx.putImageData(activeLayer.imageData, 0, 0);
-		} else {
-			// Load current ctx image data into active layer
-			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-			// Show all layers
-			const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-			for (let i = layerList.length-1; i >= 0; i--) {
-				// Copy data from this layer to `blank`
-				for (let x = 0; x < CANVAS_WIDTH; x++) {
-					for (let y = 0; y < CANVAS_HEIGHT; y++) {
-						let pos = ((y * CANVAS_WIDTH) + x) * 4;
-						if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos];
-						}
-					}
-				}
-			}
-
-			ctx.putImageData(blank, 0, 0);
-		}
-	}, [mouseDown])
 
 	useEffect(() => {
 		if (!ctx) return;
