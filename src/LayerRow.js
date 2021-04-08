@@ -6,15 +6,21 @@
  * @param {function} props.delete callback fired when this row wants to be removed
  * @param {boolean} props.selected whether this layer is the selected one
  * @param {function} props.onSelect callback fired when this row is pressed
+ * @param {function} props.editLayerName callback fired with string of new layer name
  */
-export const LayerRow = props => (
-	<div
-		style={{display: 'flex', flexDirection: 'row', backgroundColor: props.selected ? 'gray' : 'white'}}>
-		<div style={{display: 'flex', flex: 1}} onClick={props.onSelect}>
-			<p style={{flex: 1, color: 'black', fontSize: 20}}>{props.layer.name}</p>
+export const LayerRow = props => {
+	const backgroundColor = props.selected ? 'gray' : 'white';
+	const updateName = e => props.editLayerName(e.target.value);
+
+	return (
+		<div
+			style={{display: 'flex', flexDirection: 'row', backgroundColor}}>
+			<div style={{display: 'flex', flex: 1}} onClick={props.onSelect}>
+				<input onChange={updateName} style={{width: 120, color: 'black', fontSize: 20, backgroundColor, border: '0px'}} type='text' value={props.layer.name} />
+			</div>
+			<button onClick={props.up}>Up</button>
+			<button onClick={props.down}>Down</button>
+			<button onClick={props.delete}>Del</button>
 		</div>
-		<button onClick={props.up}>Up</button>
-		<button onClick={props.down}>Down</button>
-		<button onClick={props.delete}>Del</button>
-	</div>
-)
+	)
+}

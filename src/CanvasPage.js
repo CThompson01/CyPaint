@@ -210,6 +210,20 @@ export function CanvasPage() {
 		})
 	}, [ctx, setLayerList])
 
+	const editLayerName = useCallback(newName => {
+		setLayerList(oldLayerList => {
+			const newLayerList = [...oldLayerList];
+
+			newLayerList.forEach(layer => {
+				if (layer.id === activeLayerId) {
+					layer.name = newName;
+				}
+			})
+
+			return newLayerList;
+		})
+	}, [activeLayerId])
+
   return (
 		<div>
 			<div id="canvasPageContainer">
@@ -242,6 +256,7 @@ export function CanvasPage() {
 				selected={activeLayerId}
 				setActiveLayer={setActiveLayerId}
 				createNewLayer={createNewLayer}
+				editLayerName={editLayerName}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />

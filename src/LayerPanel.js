@@ -5,6 +5,7 @@ import { LayerRow } from './LayerRow'
  * @param {Layer} props.layers the layers to display
  * @param {function} props.setActiveLayer callback fired with id
  * @param {function} props.createNewLayer callback fired when a new layer is requested
+ * @param {function} props.editLayerName callback fired when a layer wants a new name
  */
 export const LayerPanel = props => {
 	return (
@@ -18,6 +19,7 @@ export const LayerPanel = props => {
 						onSelect={() => props.setActiveLayer(layer.id)}
 						up={() => props.up(index)}
 						down={() => props.down(index)}
+						editLayerName={props.editLayerName}
 						delete={() => props.delete(index)} />
 				))}
 			</div>
