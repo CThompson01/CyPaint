@@ -29,7 +29,7 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
   const [currentTool, setCurrentTool] = useState(tools[0]);
   const [mouseDown, setMouseDown] = useState(false);
-  const [color, setColor] = useState("black");
+  const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
   const canvasRef = useRef();
@@ -82,11 +82,6 @@ export function CanvasPage() {
 			layerList.forEach(layer => layer.imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT));
 		}
 	}, [ctx])
-
-	// TODO - delete
-	useEffect(() => {
-		setColor(oldColor => oldColor === 'red' ? 'black' : 'red')
-	}, [activeLayerId])
 
   function onMouseUp(e) {
     setMouseDown(false);
@@ -159,7 +154,15 @@ export function CanvasPage() {
 		setLayerList(oldLayerList => {
 			const newLayerList = [...oldLayerList];
 
+			if (oldLayerList.length === 1) {
+				return oldLayerList;
+			}
+
 			newLayerList.splice(index, 1);
+			if (oldLayerList[index].id === activeLayerId) {
+				// Update selected layer
+				setActiveLayerId(newLayerList[0].id)
+			}
 
 			return newLayerList;
 		})
