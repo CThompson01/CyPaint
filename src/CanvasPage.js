@@ -29,7 +29,7 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
   const [currentTool, setCurrentTool] = useState(tools[0]);
   const [mouseDown, setMouseDown] = useState(false);
-  const [color] = useState("black");
+  const [color, setColor] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
   const canvasRef = useRef();
@@ -40,6 +40,19 @@ export function CanvasPage() {
 			ctx.fillStyle = color;
 		}
 	}, [ctx, color]);
+
+	useEffect(() => {
+		if (!!ctx) {
+			// Context loaded for first time. Load empty image data into all layers
+			ctx.putImageData(ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
+			layerList.forEach(layer => layer.imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT));
+		}
+	}, [ctx])
+
+	// TODO - delete
+	useEffect(() => {
+		setColor(oldColor => oldColor === 'red' ? 'black' : 'red')
+	}, [activeLayerId])
 
   function onMouseUp(e) {
     setMouseDown(false);
@@ -58,12 +71,37 @@ export function CanvasPage() {
   }
 
 	useEffect(() => {
+		if (!ctx) return;
+
+		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
+
 		if (mouseDown) {
-			// TODO Only show active layer
+			// Only show active layer
+			ctx.putImageData(activeLayer.imageData, 0, 0);
 		} else {
-			// TODO Show all layers
+			// Load current ctx image data into active layer
+			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+			// Show all layers
+			const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+			for (let i = layerList.length-1; i >= 0; i--) {
+				// Copy data from this layer to `blank`
+				for (let x = 0; x < CANVAS_WIDTH; x++) {
+					for (let y = 0; y < CANVAS_HEIGHT; y++) {
+						let pos = ((y * CANVAS_WIDTH) + x) * 4;
+						if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos++];
+							blank.data[pos] = layerList[i].imageData.data[pos];
+						}
+					}
+				}
+			}
+
+			ctx.putImageData(blank, 0, 0);
 		}
-	}, [mouseDown, activeLayerId])
+	}, [mouseDown])
 
 	function layerUp(index) {
 		if (index === 0) return
