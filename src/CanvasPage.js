@@ -195,6 +195,21 @@ export function CanvasPage() {
 		});
 	}, [setCurrentTool])
 
+	const createNewLayer = useCallback(() => {
+		setLayerList(oldLayerList => {
+			if (!ctx) {
+				alert('Please draw on canvas at least once before creating a new layer');
+				return oldLayerList;
+			}
+
+			const newLayerList = [...oldLayerList];
+			newLayerList.push(new Layer(`${Math.floor(Math.random() * 100000)}`));
+			newLayerList[newLayerList.length-1].imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+
+			return newLayerList;
+		})
+	}, [ctx, setLayerList])
+
   return (
 		<div>
 			<div id="canvasPageContainer">
@@ -226,6 +241,7 @@ export function CanvasPage() {
 				layers={layerList}
 				selected={activeLayerId}
 				setActiveLayer={setActiveLayerId}
+				createNewLayer={createNewLayer}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />

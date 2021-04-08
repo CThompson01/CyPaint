@@ -44,7 +44,11 @@ export class Tool {
 	 * Called when the tool begins performing a modification to the layer.
 	 */
 	beginLayerEdit() {
-		this.begin();
+		if (this.begin) {
+			this.begin();
+		} else {
+			console.warn('Editing layer with no `begin` listener');
+		}
 	}
 
 	/**
@@ -52,7 +56,11 @@ export class Tool {
 	 * and the edits can be flushed.
 	 */
 	endLayerEdit() {
-		this.end();
+		if (this.end) {
+			this.end();
+		} else {
+			console.warn('Editing layer with no `end` listener');
+		}
 	}
 
 	/**
