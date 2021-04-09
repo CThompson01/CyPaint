@@ -41,6 +41,29 @@ export function CanvasPage() {
 		}
 	}, [ctx, color]);
 
+	/** Draw all layers */
+	const drawAllLayers = (ctx2d, layers) => {
+		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+		for (let i = layerList.length-1; i >= 0; i--) {
+			if (!layerList[i].visible) continue;
+
+			// Copy data from this layer to `blank`
+			for (let x = 0; x < CANVAS_WIDTH; x++) {
+				for (let y = 0; y < CANVAS_HEIGHT; y++) {
+					let pos = ((y * CANVAS_WIDTH) + x) * 4;
+					if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos++];
+						blank.data[pos] = layerList[i].imageData.data[pos];
+					}
+				}
+			}
+		}
+
+		ctx.putImageData(blank, 0, 0);
+	}
+
 	useEffect(() => {
 		if (!ctx) return;
 
@@ -55,23 +78,7 @@ export function CanvasPage() {
 			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 			// Show all layers
-			const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-			for (let i = layerList.length-1; i >= 0; i--) {
-				// Copy data from this layer to `blank`
-				for (let x = 0; x < CANVAS_WIDTH; x++) {
-					for (let y = 0; y < CANVAS_HEIGHT; y++) {
-						let pos = ((y * CANVAS_WIDTH) + x) * 4;
-						if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos++];
-							blank.data[pos] = layerList[i].imageData.data[pos];
-						}
-					}
-				}
-			}
-
-			ctx.putImageData(blank, 0, 0);
+			drawAllLayers(ctx, layerList);
 		})
 	}, [ctx, currentTool, activeLayerId])
 
@@ -103,23 +110,7 @@ export function CanvasPage() {
 		if (!ctx) return;
 
 		// Show all layers
-		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-		for (let i = layerList.length-1; i >= 0; i--) {
-			// Copy data from this layer to `blank`
-			for (let x = 0; x < CANVAS_WIDTH; x++) {
-				for (let y = 0; y < CANVAS_HEIGHT; y++) {
-					let pos = ((y * CANVAS_WIDTH) + x) * 4;
-					if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos];
-					}
-				}
-			}
-		}
-
-		ctx.putImageData(blank, 0, 0);
+		drawAllLayers(ctx, layerList);
 	}, [layerList])
 
 	function layerUp(index) {
@@ -224,6 +215,12 @@ export function CanvasPage() {
 		})
 	}, [activeLayerId])
 
+	const toggleLayerVisibility = useCallback(id => {
+		const l = layerList.find(layer => layer.id === id);
+		l.visible = !l.visible;
+		setLayerList(oldLayerList => [...oldLayerList])
+	}, [layerList, setLayerList])
+
   return (
 		<div>
 			<div id="canvasPageContainer">
@@ -257,6 +254,7 @@ export function CanvasPage() {
 				setActiveLayer={setActiveLayerId}
 				createNewLayer={createNewLayer}
 				editLayerName={editLayerName}
+				toggleLayerVisibility={toggleLayerVisibility}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />
