@@ -9,7 +9,7 @@
 export const UndoPanel = props => (
 	<div style={{ paddingLeft: 32, flexDirection: 'row' }} id='undoPanel'>
         <div style={{ paddingLeft: 16, paddingRight: 16 }}>
-            <button onClick={props.undo}>Undo</button>
+            <button onClick={props.undo} id={props.canvasEventsList}>Undo</button>
         </div>
 		<div style={{ paddingLeft: 16, paddingRight: 16 }}>
             <button onClick={props.redo}>Redo</button>

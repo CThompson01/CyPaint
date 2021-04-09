@@ -6,6 +6,6 @@ describe('Undo', () => {
     it('Undoes an action', () => {
         const wrapper = mount(<CanvasPage />)
         wrapper.find(UndoPanel).at(0).find('button').at(0).simulate('click')
-        expect(wrapper.props.canvasEvents.length == 0)
+        expect(wrapper.find(UndoPanel).props().canvasEventsList.length).toBe(0)
     })
 })

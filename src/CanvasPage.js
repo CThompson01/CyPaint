@@ -21,7 +21,7 @@ export const tools = [
 	new SquareTool(),
 	new CircleTool(),
 	new TriangleTool(),
-  new TextTool()
+	new TextTool()
 ]
 
 const CANVAS_WIDTH = 600;
@@ -35,7 +35,7 @@ export function CanvasPage() {
 	const [mouseDown, setMouseDown] = useState(false);
 	const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: 10, height: 10})]);
+	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: -10, height: -10})]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const canvasRef = useRef();
@@ -359,7 +359,8 @@ export function CanvasPage() {
 					<button onClick={download}>Download</button>
 					<UndoPanel 
 						undo={undoEvent}
-						redo={redoEvent} />
+						redo={redoEvent}
+						canvasEventsList={canvasEvents} />
 				</div>
 			</div>
 			<LayerPanel
