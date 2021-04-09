@@ -15,6 +15,62 @@ export class Tool {
 	id
 
 	/**
+	 * Listener to layer modification beginning
+	 */
+	begin
+
+	/**
+	 * Listener to layer modification ending
+	 */
+	end
+
+	/**
+	 * Register functions to receive layer updates from this tool
+	 * @param {function} begin callback fired when this tool begins to edit the canvas
+	 * @param {function} end callback fired when this tool ends edits to the canvas
+	 * @returns {function} callback to unsubscribe as a listener
+	 */
+	subscribeToLayerEdits(begin, end) {
+		this.begin = begin
+		this.end = end
+
+		return () => {
+			this.begin = undefined
+			this.end = undefined
+		}
+	}
+
+	/**
+	 * Called when the tool begins performing a modification to the layer.
+	 */
+	beginLayerEdit() {
+		if (this.begin) {
+			this.begin();
+		} else {
+			console.warn('Editing layer with no `begin` listener');
+		}
+	}
+
+	/**
+	 * Called when the tool is done performing a modification to the layer
+	 * and the edits can be flushed.
+	 */
+	endLayerEdit() {
+		if (this.end) {
+			this.end();
+		} else {
+			console.warn('Editing layer with no `end` listener');
+		}
+	}
+
+	/**
+	 * Called by canvas when this tool is being switched away from
+	 */
+	deactivate() {
+		this.endLayerEdit();
+	}
+
+	/**
 	 * Method fired when the mouse is released on the canvas
 	 * @param {object} mousePos mouse position
 	 * @param {CanvasRenderingContext2D} ctx canvas context
