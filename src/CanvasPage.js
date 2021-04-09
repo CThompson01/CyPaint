@@ -29,7 +29,7 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
   const [currentTool, setCurrentTool] = useState(tools[0]);
   const [mouseDown, setMouseDown] = useState(false);
-  const [color] = useState("black");
+  const [color, setColor] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
   const canvasRef = useRef();
@@ -119,6 +119,8 @@ export function CanvasPage() {
 		drawAllLayers(ctx, layerList);
 	}, [layerList])
 
+	useEffect(() => setColor(oldColor => oldColor === 'black' ? 'red' : 'black'), [activeLayerId])
+
 	function layerUp(index) {
 		if (index === 0) return
 		setLayerList(oldLayerList => {
@@ -156,8 +158,10 @@ export function CanvasPage() {
 			}
 
 			newLayerList.splice(index, 1);
-			if (oldLayerList[index].id === activeLayerId) {
+
+			if (oldLayerList[index].id === activeLayerId || newLayerList.length === 1) {
 				// Update selected layer
+				console.log('Setting active layer to', newLayerList[0].id)
 				setActiveLayerId(newLayerList[0].id)
 			}
 
@@ -233,6 +237,26 @@ export function CanvasPage() {
 		setLayerList(oldLayerList => [...oldLayerList])
 	}, [layerList, setLayerList])
 
+	const mergeWithLayerAbove = useCallback(id => {
+		const removingIdx = layerList.findIndex(layer => layer.id === id);
+		if (removingIdx === 0) return;
+
+		// Copy data from removing layer to previous layer
+		for (let x = 0; x < CANVAS_WIDTH; x++) {
+			for (let y = 0; y < CANVAS_HEIGHT; y++) {
+				let pos = ((y * CANVAS_WIDTH) + x) * 4;
+				if (layerList[removingIdx].imageData.data[pos+3] > 0) { // If not alpha
+					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos];
+				}
+			}
+		}
+
+		layerDelete(removingIdx)
+	}, [layerList, setLayerList])
+
   return (
 		<div>
 			<div id="canvasPageContainer">
@@ -268,6 +292,7 @@ export function CanvasPage() {
 				editLayerName={editLayerName}
 				toggleLayerVisibility={toggleLayerVisibility}
 				toggleLayerLocked={toggleLayerLocked}
+				merge={mergeWithLayerAbove}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />

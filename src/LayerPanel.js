@@ -23,6 +23,7 @@ export const LayerPanel = props => (
 					editLayerName={props.editLayerName}
 					toggleLayerVisibility={() => props.toggleLayerVisibility(layer.id)}
 					toggleLayerLocked={() => props.toggleLayerLocked(layer.id)}
+					merge={() => props.merge(layer.id)}
 					delete={() => props.delete(index)} />
 			))}
 		</div>
