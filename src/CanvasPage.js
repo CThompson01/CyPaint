@@ -8,6 +8,8 @@ import { CircleTool } from './circleTool';
 import { TriangleTool } from './triangleTool';
 import { LayerPanel } from './LayerPanel';
 import { Layer } from './layer';
+import { UndoPanel } from './UndoPanel';
+import { CanvasEvent } from './canvasEvent';
 
 /**
  * An instance of each tool
@@ -27,13 +29,15 @@ const CANVAS_HEIGHT = 400;
  * Canvas Page
  */
 export function CanvasPage() {
-  const [currentTool, setCurrentTool] = useState(tools[0]);
-  const [mouseDown, setMouseDown] = useState(false);
-  const [color] = useState("black");
+	const [currentTool, setCurrentTool] = useState(tools[0]);
+	const [mouseDown, setMouseDown] = useState(false);
+	const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
+	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: 10, height: 10})]);
+	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
-  const canvasRef = useRef();
-  const ctx = canvasRef.current?.getContext("2d");
+	const canvasRef = useRef();
+	const ctx = canvasRef.current?.getContext("2d");
 
 	useEffect(() => {
 		if (!!ctx) {
@@ -44,14 +48,14 @@ export function CanvasPage() {
 	/** Draw all layers */
 	const drawAllLayers = (ctx2d, layers) => {
 		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-		for (let i = layerList.length-1; i >= 0; i--) {
+		for (let i = layerList.length - 1; i >= 0; i--) {
 			if (!layerList[i].visible) continue;
 
 			// Copy data from this layer to `blank`
 			for (let x = 0; x < CANVAS_WIDTH; x++) {
 				for (let y = 0; y < CANVAS_HEIGHT; y++) {
 					let pos = ((y * CANVAS_WIDTH) + x) * 4;
-					if (layerList[i].imageData.data[pos+3] > 0) { // If not alpha
+					if (layerList[i].imageData.data[pos + 3] > 0) { // If not alpha
 						blank.data[pos] = layerList[i].imageData.data[pos++];
 						blank.data[pos] = layerList[i].imageData.data[pos++];
 						blank.data[pos] = layerList[i].imageData.data[pos++];
@@ -90,27 +94,36 @@ export function CanvasPage() {
 		}
 	}, [ctx])
 
-  function onMouseUp(e) {
+	function onMouseUp(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
-    setMouseDown(false);
-    currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx);
-  }
+		setMouseDown(false);
+		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx);
+		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
+			addCanvasEvent(canvasEvent);
+		}
+	}
 
-  function onMouseDown(e) {
+	function onMouseDown(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
-    setMouseDown(true);
-    currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx);
-  }
+		setMouseDown(true);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx);
+		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
+			addCanvasEvent(canvasEvent);
+		}
+	}
 
-  function onMouseMove(e) {
+	function onMouseMove(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
-    if (mouseDown) {
-      currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
-    }
-  }
+		if (mouseDown) {
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
+			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
+				addCanvasEvent(canvasEvent);
+			}
+		}
+	}
 
 	useEffect(() => {
 		if (!ctx) return;
@@ -125,8 +138,8 @@ export function CanvasPage() {
 			const newLayerList = [...oldLayerList];
 
 			// Swap layer[index] and layer[index-1]
-			const tmp = newLayerList[index-1];
-			newLayerList[index-1] = newLayerList[index];
+			const tmp = newLayerList[index - 1];
+			newLayerList[index - 1] = newLayerList[index];
 			newLayerList[index] = tmp;
 
 			return newLayerList;
@@ -139,8 +152,8 @@ export function CanvasPage() {
 			const newLayerList = [...oldLayerList];
 
 			// Swap layer[index] and layer[index+1]
-			const tmp = newLayerList[index+1];
-			newLayerList[index+1] = newLayerList[index];
+			const tmp = newLayerList[index + 1];
+			newLayerList[index + 1] = newLayerList[index];
 			newLayerList[index] = tmp;
 
 			return newLayerList;
@@ -165,25 +178,25 @@ export function CanvasPage() {
 
 			return newLayerList;
 		})
-	} 
+	}
 
-  function handleImage(e) {
-    var img = new Image();
-    img.onload = draw;
-    img.src = URL.createObjectURL(e.target.files[0]);
-  }
-  function draw() {
-    var ctx = canvasRef.current.getContext("2d");
-    ctx.drawImage(this, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  }
-  function download(){
-	var canvas = document.getElementById('mainCanvas');
-	const image = canvas.toDataURL();
-	const link = document.createElement('a');
-	link.href = image;
-	link.download = 'image.png';
-	link.click();
-  }
+	function handleImage(e) {
+		var img = new Image();
+		img.onload = draw;
+		img.src = URL.createObjectURL(e.target.files[0]);
+	}
+	function draw() {
+		var ctx = canvasRef.current.getContext("2d");
+		ctx.drawImage(this, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	}
+	function download() {
+		var canvas = document.getElementById('mainCanvas');
+		const image = canvas.toDataURL();
+		const link = document.createElement('a');
+		link.href = image;
+		link.download = 'image.png';
+		link.click();
+	}
 
 	const updateCurrentTool = useCallback(tool => {
 		setCurrentTool(oldTool => {
@@ -203,7 +216,7 @@ export function CanvasPage() {
 
 			const newLayerList = [...oldLayerList];
 			newLayerList.push(new Layer(`${Math.floor(Math.random() * 100000)}`));
-			newLayerList[newLayerList.length-1].imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+			newLayerList[newLayerList.length - 1].imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 
 			return newLayerList;
 		})
@@ -243,11 +256,11 @@ export function CanvasPage() {
 		for (let x = 0; x < CANVAS_WIDTH; x++) {
 			for (let y = 0; y < CANVAS_HEIGHT; y++) {
 				let pos = ((y * CANVAS_WIDTH) + x) * 4;
-				if (layerList[removingIdx].imageData.data[pos+3] > 0) { // If not alpha
-					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx-1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos];
+				if (layerList[removingIdx].imageData.data[pos + 3] > 0) { // If not alpha
+					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
+					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos];
 				}
 			}
 		}
@@ -255,7 +268,69 @@ export function CanvasPage() {
 		layerDelete(removingIdx)
 	}, [layerList, setLayerList])
 
-  return (
+	useEffect(() => {
+		if (ctx !== undefined) {
+			ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
+		}
+	}, [ctx, canvasEvents])
+
+	function addCanvasEvent(canvasEvent) {
+		setCanvasEvents(oldCanvasEvents => {
+			const newCanvasEvents = [...oldCanvasEvents];
+			canvasEvent.updateEventId(oldCanvasEvents.length);
+			newCanvasEvents.push(canvasEvent);
+			return newCanvasEvents;
+		});
+
+		setUndoneEvents(oldUndoneEvents => { return [] });
+	}
+
+	function undoEvent() {
+		if (canvasEvents.length <= 0) {
+			return;
+		}
+
+		var undoneEvent;
+
+		// Remove the most recent event from the list of canvasEvents
+		setCanvasEvents(oldCanvasEvents => {
+			const newCanvasEvents = [...oldCanvasEvents];
+			undoneEvent = newCanvasEvents.pop();
+			return newCanvasEvents;
+		});
+
+		// Add the undone event to the list of undoneEvents
+		setUndoneEvents(oldUndoneEvents => {
+			const newUndoneEvents = [...oldUndoneEvents];
+			newUndoneEvents.push(undoneEvent);
+			return newUndoneEvents;
+		});
+	}
+
+	function redoEvent() {
+		if (undoneEvents.length <= 0) {
+			return;
+		}
+
+		var redoEvent;
+
+		// Remove the most recent undone event from the list of undoneEvents
+		setUndoneEvents(oldUndoneEvents => {
+			const newUndoneEvents = [...oldUndoneEvents];
+			redoEvent = newUndoneEvents.pop();
+			return newUndoneEvents;
+		});
+
+		// Add the redone event to the list of canvasEvents
+		setCanvasEvents(oldCanvasEvents => {
+			const newCanvasEvents = [...oldCanvasEvents];
+			newCanvasEvents.push(redoEvent);
+			return newCanvasEvents;
+		});
+	}
+
+	return (
 		<div>
 			<div id="canvasPageContainer">
 				<ToolPanel
@@ -279,7 +354,10 @@ export function CanvasPage() {
 						accept="image/*"
 						onChange={handleImage}
 					></input>
-			<button onClick = {download}>Download</button>
+					<button onClick={download}>Download</button>
+					<UndoPanel 
+						undo={undoEvent}
+						redo={redoEvent} />
 				</div>
 			</div>
 			<LayerPanel
@@ -295,5 +373,5 @@ export function CanvasPage() {
 				down={layerDown}
 				delete={layerDelete} />
 		</div>
-  );
+	);
 }

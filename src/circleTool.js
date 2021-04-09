@@ -1,3 +1,4 @@
+import { CanvasEvent } from './canvasEvent'
 import circle from './circle.svg'
 import { Tool } from './tool'
 
@@ -19,11 +20,10 @@ export class CircleTool extends Tool {
 			this.beginLayerEdit();
 		} else {
 			const radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2))
-			ctx.beginPath()
-			ctx.arc(originPoint[0], originPoint[1], radius, 0, 2*Math.PI)
-			ctx.fill()
+			var canvasEvent = new CanvasEvent(-1, 'circle', {x: originPoint[0], y: originPoint[1], size: radius});
 			originPoint = [-1,-1]
 			this.endLayerEdit();
+			return canvasEvent;
 		}
 	}
 }

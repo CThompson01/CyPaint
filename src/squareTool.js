@@ -1,3 +1,4 @@
+import { CanvasEvent } from './canvasEvent'
 import square from './square.svg'
 import { Tool } from './tool'
 
@@ -17,10 +18,12 @@ export class SquareTool extends Tool {
 		if (originPoint[0] === -1) {
 			originPoint = [mousePos.x, mousePos.y];
 			this.beginLayerEdit();
+			return undefined;
 		} else {
-			ctx.fillRect(originPoint[0], originPoint[1], mousePos.x - originPoint[0], mousePos.y - originPoint[1])
+			var canvasEvent = new CanvasEvent(-1, 'square', {x: originPoint[0], y: originPoint[1], width: mousePos.x - originPoint[0], height: mousePos.y - originPoint[1]});
 			originPoint = [-1,-1];
 			this.endLayerEdit();
+			return canvasEvent;
 		}
 	}
 }
