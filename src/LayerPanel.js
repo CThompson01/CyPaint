@@ -7,6 +7,7 @@ import { LayerRow } from './LayerRow'
  * @param {function} props.createNewLayer callback fired when a new layer is requested
  * @param {function} props.editLayerName callback fired when a layer wants a new name
  * @param {function} props.toggleLayerVisibility callback fired with layer id when visibility is toggled
+ * @param {function} props.toggleLayerLocked callback fired with layer id when locked is toggled
  */
 export const LayerPanel = props => (
 	<div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}} id='mainLayerPanel'>
@@ -21,6 +22,7 @@ export const LayerPanel = props => (
 					down={() => props.down(index)}
 					editLayerName={props.editLayerName}
 					toggleLayerVisibility={() => props.toggleLayerVisibility(layer.id)}
+					toggleLayerLocked={() => props.toggleLayerLocked(layer.id)}
 					delete={() => props.delete(index)} />
 			))}
 		</div>

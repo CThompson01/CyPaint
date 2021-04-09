@@ -8,6 +8,7 @@
  * @param {function} props.onSelect callback fired when this row is pressed
  * @param {function} props.editLayerName callback fired with string of new layer name
  * @param {function} props.toggleLayerVisibility callback fired when hide/show is clicked
+ * @param {function} props.toggleLayerLocked callback fired when lock/unlock is clicked
  */
 export const LayerRow = props => {
 	const backgroundColor = props.selected ? 'gray' : 'white';
@@ -19,6 +20,7 @@ export const LayerRow = props => {
 			<div style={{display: 'flex', flex: 1}} onClick={props.onSelect}>
 				<input onChange={updateName} style={{width: 120, color: 'black', fontSize: 20, backgroundColor, border: '0px'}} type='text' value={props.layer.name} />
 			</div>
+			<button onClick={props.toggleLayerLocked}>{props.layer.locked ? 'Unlock' : 'Lock'}</button>
 			<button onClick={props.toggleLayerVisibility}>{props.layer.visible ? 'Hide' : 'Show'}</button>
 			<button onClick={props.up}>Up</button>
 			<button onClick={props.down}>Down</button>

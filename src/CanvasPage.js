@@ -91,16 +91,22 @@ export function CanvasPage() {
 	}, [ctx])
 
   function onMouseUp(e) {
+		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
+
     setMouseDown(false);
     currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx);
   }
 
   function onMouseDown(e) {
+		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
+
     setMouseDown(true);
     currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx);
   }
 
   function onMouseMove(e) {
+		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
+
     if (mouseDown) {
       currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
     }
@@ -221,6 +227,12 @@ export function CanvasPage() {
 		setLayerList(oldLayerList => [...oldLayerList])
 	}, [layerList, setLayerList])
 
+	const toggleLayerLocked = useCallback(id => {
+		const l = layerList.find(layer => layer.id === id);
+		l.locked = !l.locked;
+		setLayerList(oldLayerList => [...oldLayerList])
+	}, [layerList, setLayerList])
+
   return (
 		<div>
 			<div id="canvasPageContainer">
@@ -255,6 +267,7 @@ export function CanvasPage() {
 				createNewLayer={createNewLayer}
 				editLayerName={editLayerName}
 				toggleLayerVisibility={toggleLayerVisibility}
+				toggleLayerLocked={toggleLayerLocked}
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />
