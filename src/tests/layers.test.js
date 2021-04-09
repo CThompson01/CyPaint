@@ -1,36 +1,60 @@
 import { mount } from 'enzyme'
-import { CanvasPage } from '../CanvasPage'
+import { Layer } from '../layer'
+import { LayerPanel } from '../LayerPanel'
 import { LayerRow } from '../LayerRow'
 
+let layerList = [new Layer('First'), new Layer('Second')]
+
 describe('Layers', () => {
-	it('moves layer up', () => {
-		const wrapper = mount(<CanvasPage />)
-
-		// Press the up button on the second layer
-		wrapper.find(LayerRow).at(1).find('button').at(0).simulate('click')
-
-		// Expect it to now be the first row
-		expect(wrapper.find(LayerRow).first().find('p').first().text()).toBe('Second')
+	beforeEach(() => {
+		layerList = [new Layer('First'), new Layer('Second')]	
 	})
 
-	it('moves layer down', () => {
-		const wrapper = mount(<CanvasPage />)
+	it('displays layers', () => {
+		const wrapper = mount(<LayerPanel layers={layerList} />)
 
-		// Press the down button on the second layer
-		wrapper.find(LayerRow).first().find('button').at(1).simulate('click')
-
-		// Expect it to now be the second row
-		expect(wrapper.find(LayerRow).at(1).find('p').first().text()).toBe('First')
+		expect(wrapper.find(LayerRow).first().find('input').first().props().value).toBe('First')
+		expect(wrapper.find(LayerRow).at(1).find('input').first().props().value).toBe('Second')
 	})
 
-	it('deletes a layer', () => {
-		const wrapper = mount(<CanvasPage />)
+	it('up callback fired', () => {
+		const up = jest.fn();
+		const wrapper = mount(<LayerPanel layers={layerList} up={up} />)
 
-		// Press the delete button on the first layer
-		wrapper.find(LayerRow).first().find('button').at(2).simulate('click')
+		wrapper.find(LayerRow).at(1).find('button').at(3).simulate('click')
 
-		// Expect there to be one layer and for it to be the 'Second' layer
-		expect(wrapper.find(LayerRow).length).toBe(1)
-		expect(wrapper.find(LayerRow).first().find('p').first().text()).toBe('Second')
+		expect(up).toBeCalledTimes(1);
+	})
+
+	it('down callback fired', () => {
+		const down = jest.fn();
+		const wrapper = mount(<LayerPanel layers={layerList} down={down} />)
+
+		wrapper.find(LayerRow).at(1).find('button').at(4).simulate('click')
+
+		expect(down).toBeCalledTimes(1);
+	})
+
+	it('delete callback fired', () => {
+		const deleteFunc = jest.fn();
+		const wrapper = mount(<LayerPanel layers={layerList} delete={deleteFunc} />)
+
+		wrapper.find(LayerRow).at(1).find('button').at(5).simulate('click')
+
+		expect(deleteFunc).toBeCalledTimes(1);
+	})
+
+	it('invisible layer displays Show button', () => {
+		layerList[0].visible = false;
+		const wrapper = mount(<LayerPanel layers={layerList} />)
+
+		expect(wrapper.find(LayerRow).at(0).find('button').at(1).text()).toBe('Show')
+	})
+
+	it('locked layer displays Unlock button', () => {
+		layerList[0].locked = true;
+		const wrapper = mount(<LayerPanel layers={layerList} />)
+
+		expect(wrapper.find(LayerRow).at(0).find('button').at(0).text()).toBe('Unlock')
 	})
 })
