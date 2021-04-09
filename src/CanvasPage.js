@@ -6,6 +6,7 @@ import { EraserTool } from './eraserTool';
 import { SquareTool } from './squareTool';
 import { CircleTool } from './circleTool';
 import { TriangleTool } from './triangleTool';
+import { TextTool } from './textTool';
 import { LayerPanel } from './LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './UndoPanel';
@@ -19,7 +20,8 @@ export const tools = [
 	new EraserTool(),
 	new SquareTool(),
 	new CircleTool(),
-	new TriangleTool()
+	new TriangleTool(),
+  new TextTool()
 ]
 
 const CANVAS_WIDTH = 600;
