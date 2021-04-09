@@ -18,7 +18,7 @@ HTMLCanvasElement.prototype.getContext = () => ({
 		};
 	},
 	putImageData: function() {},
-	createImageData: function(w, h){ return new ImageData(w, h) },
+	createImageData: function(w, h) { return {data: []} },
 	setTransform: function(){},
 	drawImage: function(){},
 	save: function(){},

@@ -1,3 +1,4 @@
+import { CanvasEvent } from './canvasEvent'
 import eraser from './eraser.svg'
 import { Tool } from './tool'
 
@@ -11,7 +12,7 @@ export class EraserTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx) {
-		ctx.clearRect(mousePos.x, mousePos.y, 1, 1)
+		return new CanvasEvent(-1, 'eraser', {x: mousePos.x, y: mousePos.y, size: 1});
 	}
 
 	onMouseUp(mousePos, ctx) {
