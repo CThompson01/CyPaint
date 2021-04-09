@@ -29,7 +29,7 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
   const [currentTool, setCurrentTool] = useState(tools[0]);
   const [mouseDown, setMouseDown] = useState(false);
-  const [color, setColor] = useState("black");
+  const [color] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
   const canvasRef = useRef();
@@ -118,8 +118,6 @@ export function CanvasPage() {
 		// Show all layers
 		drawAllLayers(ctx, layerList);
 	}, [layerList])
-
-	useEffect(() => setColor(oldColor => oldColor === 'black' ? 'red' : 'black'), [activeLayerId])
 
 	function layerUp(index) {
 		if (index === 0) return
