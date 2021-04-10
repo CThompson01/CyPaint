@@ -1,5 +1,6 @@
 import triangle from './triangle.svg'
 import { Tool } from './tool'
+import { CanvasEvent } from './canvasEvent'
 
 var markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
 
@@ -8,14 +9,19 @@ export class TriangleTool extends Tool {
 	name = 'Triangle Tool'
 	id = 'tool.triangle'
 
+	deactivate() {
+		super.deactivate();
+		markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
+	}
+
 	onMouseDown(mousePos, ctx) {
 		if (markers.clicks === -1) {
-			console.log("Start markers")
 			markers.top = mousePos.y
 			markers.startX = mousePos.x
 			markers.clicks++
+			this.beginLayerEdit();
+			return null;
 		} else if (markers.clicks === 0) {
-			console.log("Mid Markers")
 			if (Math.abs(mousePos.y - markers.top) > Math.abs(mousePos.x - markers.startX)) {
 				markers.bottom = mousePos.y
 			} else {
@@ -23,8 +29,8 @@ export class TriangleTool extends Tool {
 				markers.startX = mousePos.x
 			}
 			markers.clicks++;
+			return null;
 		} else {
-			console.log("End Markers")
 			if (markers.endX === -1) {
 				markers.endX = mousePos.x
 			} else {
@@ -32,13 +38,12 @@ export class TriangleTool extends Tool {
 				markers.top = mousePos.y
 			}
 
-			ctx.beginPath();
-			ctx.moveTo(markers.startX, markers.top);
-			ctx.lineTo(markers.startX, markers.bottom);
-			ctx.lineTo(markers.endX, markers.bottom);
-			ctx.fill();
+			this.endLayerEdit();
 
-			markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
+			var canvasEvent = new CanvasEvent(-1, 'triangle', {top: markers.top, bottom: markers.bottom, 
+				startX: markers.startX, endX: markers.endX});
+			markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 };
+			return canvasEvent;
 		}
 	}
 }

@@ -1,3 +1,4 @@
+import { CanvasEvent } from './canvasEvent'
 import pen from './pen.svg'
 import { Tool } from './tool'
 
@@ -6,7 +7,15 @@ export class PencilTool extends Tool {
 	name = 'Pencil Tool'
 	id = 'tool.pencil'
 
+	onMouseDown(mousePos, ctx) {
+		this.beginLayerEdit();
+	}
+
 	onMouseMove(mousePos, ctx) {
-		ctx.fillRect(mousePos.x, mousePos.y, 1, 1)
+		return new CanvasEvent(-1, "pencil", {x: mousePos.x, y: mousePos.y, size: 1});
+	}
+
+	onMouseUp(mousePos, ctx) {
+		this.endLayerEdit();
 	}
 }

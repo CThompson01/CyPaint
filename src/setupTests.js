@@ -9,8 +9,35 @@ import enzyme from 'enzyme'
 enzyme.configure({ adapter: new Adapter() })
 
 // Mock ctx.getContext
-HTMLCanvasElement.prototype.getContext = () => { 
-  return {
-		
-	}
-};
+HTMLCanvasElement.prototype.getContext = () => ({
+	fillRect: function() {},
+	clearRect: function(){},
+	getImageData: function(x, y, w, h) {
+		return {
+			data: new Array(w*h*4)
+		};
+	},
+	putImageData: function() {},
+	createImageData: function(w, h) { return {data: []} },
+	setTransform: function(){},
+	drawImage: function(){},
+	save: function(){},
+	fillText: function(){},
+	restore: function(){},
+	beginPath: function(){},
+	moveTo: function(){},
+	lineTo: function(){},
+	closePath: function(){},
+	stroke: function(){},
+	translate: function(){},
+	scale: function(){},
+	rotate: function(){},
+	arc: function(){},
+	fill: function(){},
+	measureText: function(){
+		return { width: 0 };
+	},
+	transform: function(){},
+	rect: function(){},
+	clip: function(){},
+});
