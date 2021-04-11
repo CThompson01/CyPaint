@@ -1,6 +1,6 @@
-import { CanvasEvent } from './canvasEvent'
-import pen from './pen.svg'
-import { Tool } from './tool'
+import { CanvasEvent } from '../canvasEvent'
+import pen from '../icons/pen.svg'
+import { Tool } from '../tool'
 
 export class PencilTool extends Tool {
 	icon = pen

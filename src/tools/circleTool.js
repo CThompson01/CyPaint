@@ -1,6 +1,6 @@
-import { CanvasEvent } from './canvasEvent'
-import circle from './circle.svg'
-import { Tool } from './tool'
+import { CanvasEvent } from '../canvasEvent'
+import circle from '../icons/circle.svg'
+import { Tool } from '../tool'
 
 var originPoint = [-1,-1]
 

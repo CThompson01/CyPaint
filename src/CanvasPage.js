@@ -1,15 +1,15 @@
 import './CanvasPage.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ToolPanel } from './ToolPanel';
-import { PencilTool } from './pencilTool';
-import { EraserTool } from './eraserTool';
-import { SquareTool } from './squareTool';
-import { CircleTool } from './circleTool';
-import { TriangleTool } from './triangleTool';
-import { TextTool } from './textTool';
-import { LayerPanel } from './LayerPanel';
+import { ToolPanel } from './panels/ToolPanel';
+import { PencilTool } from './tools/pencilTool';
+import { EraserTool } from './tools/eraserTool';
+import { SquareTool } from './tools/squareTool';
+import { CircleTool } from './tools/circleTool';
+import { TriangleTool } from './tools/triangleTool';
+import { TextTool } from './tools/textTool';
+import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
-import { UndoPanel } from './UndoPanel';
+import { UndoPanel } from './panels/UndoPanel';
 import { CanvasEvent } from './canvasEvent';
 
 /**

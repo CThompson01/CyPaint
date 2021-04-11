@@ -1,6 +1,6 @@
-import { CanvasEvent } from './canvasEvent'
-import eraser from './eraser.svg'
-import { Tool } from './tool'
+import { CanvasEvent } from '../canvasEvent'
+import eraser from '../icons/eraser.svg'
+import { Tool } from '../tool'
 
 export class EraserTool extends Tool {
 	icon = eraser

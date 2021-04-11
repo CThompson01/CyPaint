@@ -1,6 +1,6 @@
-import triangle from './triangle.svg'
-import { Tool } from './tool'
-import { CanvasEvent } from './canvasEvent'
+import triangle from '../icons/triangle.svg'
+import { Tool } from '../tool'
+import { CanvasEvent } from '../canvasEvent'
 
 var markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 }
 
