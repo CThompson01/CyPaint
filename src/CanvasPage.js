@@ -35,7 +35,6 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
 	const [currentTool, setCurrentTool] = useState(tools[0]);
 	const [mouseDown, setMouseDown] = useState(false);
-	const [color, setColor] = useState('black');
 	const [size, setSize] = useState(3);
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'black', { x: 0, y: 0, width: -10, height: -10 })]);
@@ -43,12 +42,6 @@ export function CanvasPage() {
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const canvasRef = useRef();
 	const ctx = canvasRef.current?.getContext('2d');
-
-	useEffect(() => {
-		if (!!ctx) {
-			ctx.fillStyle = color;
-		}
-	}, [ctx, color]);
 
 	/** Draw all layers */
 	const drawAllLayers = (ctx2d, layers) => {
