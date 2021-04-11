@@ -12,7 +12,7 @@ export class Medium extends Tool {
     }
 
     onMouseMove(mousePos, ctx) {
-        return new CanvasEvent(-1, "medium", {x: mousePos.x, y: mousePos.y, size: 9});
+        return new CanvasEvent(-1, "medium", ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 9});
     }
 
     onMouseUp(mousePos, ctx) {

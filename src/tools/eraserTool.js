@@ -12,7 +12,7 @@ export class EraserTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx) {
-		return new CanvasEvent(-1, 'eraser', {x: mousePos.x, y: mousePos.y, size: 1});
+		return new CanvasEvent(-1, 'eraser', ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 1});
 	}
 
 	onMouseUp(mousePos, ctx) {

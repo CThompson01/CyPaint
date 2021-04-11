@@ -12,7 +12,7 @@ export class PencilTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx) {
-		return new CanvasEvent(-1, "pencil", {x: mousePos.x, y: mousePos.y, size: 1});
+		return new CanvasEvent(-1, "pencil", ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 1});
 	}
 
 	onMouseUp(mousePos, ctx) {

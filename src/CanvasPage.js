@@ -42,7 +42,7 @@ export function CanvasPage() {
 	const [mouseDown, setMouseDown] = useState(false);
 	const [color, setColor] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: -10, height: -10})]);
+	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'black', {x: 0, y: 0, width: -10, height: -10})]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const canvasRef = useRef();

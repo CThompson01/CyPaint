@@ -20,7 +20,7 @@ export class SquareTool extends Tool {
 			this.beginLayerEdit();
 			return undefined;
 		} else {
-			var canvasEvent = new CanvasEvent(-1, 'square', {x: originPoint[0], y: originPoint[1], width: mousePos.x - originPoint[0], height: mousePos.y - originPoint[1]});
+			var canvasEvent = new CanvasEvent(-1, 'square', ctx.fillStyle, {x: originPoint[0], y: originPoint[1], width: mousePos.x - originPoint[0], height: mousePos.y - originPoint[1]});
 			originPoint = [-1,-1];
 			this.endLayerEdit();
 			return canvasEvent;

@@ -12,7 +12,7 @@ export class Large extends Tool {
     }
 
     onMouseMove(mousePos, ctx) {
-        return new CanvasEvent(-1, "large", {x: mousePos.x, y: mousePos.y, size: 15});
+        return new CanvasEvent(-1, "large", ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 15});
     }
 
     onMouseUp(mousePos, ctx) {

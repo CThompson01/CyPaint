@@ -12,7 +12,7 @@ export class Small extends Tool {
     }
 
     onMouseMove(mousePos, ctx) {
-        return new CanvasEvent(-1, "small", {x: mousePos.x, y: mousePos.y, size: 3});
+        return new CanvasEvent(-1, "small", ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 3});
     }
 
     onMouseUp(mousePos, ctx) {

@@ -40,7 +40,7 @@ export class TriangleTool extends Tool {
 
 			this.endLayerEdit();
 
-			var canvasEvent = new CanvasEvent(-1, 'triangle', {top: markers.top, bottom: markers.bottom, 
+			var canvasEvent = new CanvasEvent(-1, 'triangle', ctx.fillStyle, {top: markers.top, bottom: markers.bottom, 
 				startX: markers.startX, endX: markers.endX});
 			markers = { clicks: -1, top: -1, startX: -1, bottom: -1, endX: -1 };
 			return canvasEvent;
