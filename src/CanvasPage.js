@@ -11,12 +11,19 @@ import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './panels/UndoPanel';
 import { CanvasEvent } from './canvasEvent';
+import {ColorSelect} from "./ColorSelect";
+import {Small} from "./small";
+import {Medium} from "./medium";
+import {Large} from "./Large";
 
 /**
  * An instance of each tool
  */
 export const tools = [
 	new PencilTool(),
+	new Small(),
+	new Medium(),
+	new Large(),
 	new EraserTool(),
 	new SquareTool(),
 	new CircleTool(),
@@ -33,7 +40,7 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
 	const [currentTool, setCurrentTool] = useState(tools[0]);
 	const [mouseDown, setMouseDown] = useState(false);
-	const [color] = useState("black");
+	const [color, setColor] = useState("black");
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: -10, height: -10})]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
@@ -340,6 +347,7 @@ export function CanvasPage() {
 					toolList={tools}
 					setCurrentTool={updateCurrentTool}
 				/>
+
 				<canvas
 					id="mainCanvas"
 					ref={canvasRef}
@@ -349,6 +357,7 @@ export function CanvasPage() {
 					onMouseDown={onMouseDown}
 					onMouseMove={onMouseMove}
 				/>
+
 				<div>
 					<input
 						type="file"
@@ -360,9 +369,12 @@ export function CanvasPage() {
 					<UndoPanel 
 						undo={undoEvent}
 						redo={redoEvent}
-						canvasEventsList={canvasEvents} />
+						canvasEventsList={`canvasEvents`} />
 				</div>
 			</div>
+			<ColorSelect
+				setColor={setColor}
+			/>
 			<LayerPanel
 				layers={layerList}
 				selected={activeLayerId}
@@ -375,6 +387,7 @@ export function CanvasPage() {
 				up={layerUp}
 				down={layerDown}
 				delete={layerDelete} />
+
 		</div>
 	);
 }

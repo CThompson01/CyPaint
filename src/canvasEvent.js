@@ -22,6 +22,15 @@ export class CanvasEvent {
             case 'pencil':
                 ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
                 break;
+            case 'small':
+                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
+                break;
+            case 'medium':
+                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
+                break;
+            case 'large':
+                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
+                break;
             case 'eraser':
                 ctx.clearRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
                 break;
