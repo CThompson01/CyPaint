@@ -1,14 +1,25 @@
-import pen from './pen.svg'
+import smDot from './smDot.png'
 import { Tool } from './tool'
+import {CanvasEvent} from "./canvasEvent";
 
-export class BrushSize extends Tool {
-    icon = pen
-    name = 'Brush Size'
-    id = 'tool.brushSize'
+export class Small extends Tool {
+    icon = smDot
+    name = 'small'
+    id = 'tool.small'
 
+    onMouseDown(mousePos, ctx) {
+        this.beginLayerEdit();
+    }
 
+    onMouseMove(mousePos, ctx) {
+        return new CanvasEvent(-1, "small", {x: mousePos.x, y: mousePos.y, size: 3});
+    }
 
-    showOptions(ctx){
+    onMouseUp(mousePos, ctx) {
+        this.endLayerEdit();
+    }
+
+    /**showOptions(ctx){
         function setSmall(ctx){
         ctx.lineWidth = 5;
     }
@@ -32,5 +43,5 @@ export class BrushSize extends Tool {
                 </table>
             </div>
         );
-    }
+    }*/
 }
