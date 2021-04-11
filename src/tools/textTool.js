@@ -1,5 +1,5 @@
-import text from "./text.svg";
-import { Tool } from "./tool";
+import text from "../icons/text.svg";
+import { Tool } from "../tool";
 var hasInput = false;
 var font = "14px sans-serif";
 

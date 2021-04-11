@@ -1,29 +1,24 @@
 import './CanvasPage.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ToolPanel } from './ToolPanel';
-import { PencilTool } from './pencilTool';
-import { EraserTool } from './eraserTool';
-import { SquareTool } from './squareTool';
-import { CircleTool } from './circleTool';
-import { TriangleTool } from './triangleTool';
-import { TextTool } from './textTool';
-import { LayerPanel } from './LayerPanel';
+import { ToolPanel } from './panels/ToolPanel';
+import { PencilTool } from './tools/pencilTool';
+import { EraserTool } from './tools/eraserTool';
+import { SquareTool } from './tools/squareTool';
+import { CircleTool } from './tools/circleTool';
+import { TriangleTool } from './tools/triangleTool';
+import { TextTool } from './tools/textTool';
+import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
-import { UndoPanel } from './UndoPanel';
+import { UndoPanel } from './panels/UndoPanel';
 import { CanvasEvent } from './canvasEvent';
-import {ColorSelect} from "./ColorSelect";
-import {Small} from "./small";
-import {Medium} from "./medium";
-import {Large} from "./Large";
+import { ColorPanel } from "./panels/ColorPanel";
+import { SizePanel } from './panels/SizePanel';
 
 /**
  * An instance of each tool
  */
 export const tools = [
 	new PencilTool(),
-	new Small(),
-	new Medium(),
-	new Large(),
 	new EraserTool(),
 	new SquareTool(),
 	new CircleTool(),
@@ -40,19 +35,13 @@ const CANVAS_HEIGHT = 400;
 export function CanvasPage() {
 	const [currentTool, setCurrentTool] = useState(tools[0]);
 	const [mouseDown, setMouseDown] = useState(false);
-	const [color, setColor] = useState("black");
+	const [size, setSize] = useState(3);
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', {x: 0, y: 0, width: -10, height: -10})]);
+	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'black', { x: 0, y: 0, width: -10, height: -10 })]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const canvasRef = useRef();
-	const ctx = canvasRef.current?.getContext("2d");
-
-	useEffect(() => {
-		if (!!ctx) {
-			ctx.fillStyle = color;
-		}
-	}, [ctx, color]);
+	const ctx = canvasRef.current?.getContext('2d');
 
 	/** Draw all layers */
 	const drawAllLayers = (ctx2d, layers) => {
@@ -107,7 +96,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(false);
-		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx);
+		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -117,7 +106,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -127,7 +116,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		if (mouseDown) {
-			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx);
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx, size);
 			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 				addCanvasEvent(canvasEvent);
 			}
@@ -194,10 +183,12 @@ export function CanvasPage() {
 		img.onload = draw;
 		img.src = URL.createObjectURL(e.target.files[0]);
 	}
+
 	function draw() {
 		var ctx = canvasRef.current.getContext("2d");
 		ctx.drawImage(this, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 	}
+
 	function download() {
 		var canvas = document.getElementById('mainCanvas');
 		const image = canvas.toDataURL();
@@ -279,7 +270,7 @@ export function CanvasPage() {
 
 	useEffect(() => {
 		if (ctx !== undefined) {
-			ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+			ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
 		}
 	}, [ctx, canvasEvents])
@@ -345,8 +336,7 @@ export function CanvasPage() {
 				<ToolPanel
 					currentTool={currentTool}
 					toolList={tools}
-					setCurrentTool={updateCurrentTool}
-				/>
+					setCurrentTool={updateCurrentTool} />
 
 				<canvas
 					id="mainCanvas"
@@ -355,8 +345,7 @@ export function CanvasPage() {
 					height={CANVAS_HEIGHT}
 					onMouseUp={onMouseUp}
 					onMouseDown={onMouseDown}
-					onMouseMove={onMouseMove}
-				/>
+					onMouseMove={onMouseMove} />
 
 				<div>
 					<input
@@ -366,15 +355,14 @@ export function CanvasPage() {
 						onChange={handleImage}
 					></input>
 					<button onClick={download}>Download</button>
-					<UndoPanel 
+					<UndoPanel
 						undo={undoEvent}
 						redo={redoEvent}
 						canvasEventsList={`canvasEvents`} />
 				</div>
 			</div>
-			<ColorSelect
-				setColor={setColor}
-			/>
+			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
+			<SizePanel setSize={setSize} />
 			<LayerPanel
 				layers={layerList}
 				selected={activeLayerId}

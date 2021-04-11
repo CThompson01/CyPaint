@@ -1,5 +1,5 @@
 import './ToolPanel.css'
-import { ToolIcon } from './ToolIcon'
+import { ToolIcon } from '../ToolIcon'
 
 /**
  * Tool Panel

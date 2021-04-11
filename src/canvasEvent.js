@@ -5,11 +5,16 @@ export class CanvasEvent {
     /** The type of event that is occurring (e.g. drawTriangle, drawLine, eraser) */
     eventType
 
+    /** The color that the event should be */
+    color
+
+    /** The data containing where an event happened and the size of the event */
     positionData
 
-	constructor(id, type, posData) {
+	constructor(id, type, color, posData) {
 		this.eventId = id;
         this.eventType = type;
+        this.eventColor = color;
         this.positionData = posData;
 	}
 
@@ -18,17 +23,9 @@ export class CanvasEvent {
     }
 
     drawEvent(ctx) {
+        ctx.fillStyle = this.eventColor;
         switch (this.eventType) {
             case 'pencil':
-                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
-                break;
-            case 'small':
-                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
-                break;
-            case 'medium':
-                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
-                break;
-            case 'large':
                 ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
                 break;
             case 'eraser':

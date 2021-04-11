@@ -1,5 +1,5 @@
 import './LayerPanel.css'
-import { LayerRow } from './LayerRow'
+import { LayerRow } from '../LayerRow'
 
 /**
  * @param {Layer} props.layers the layers to display
