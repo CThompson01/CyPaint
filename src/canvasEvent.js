@@ -14,7 +14,7 @@ export class CanvasEvent {
 	constructor(id, type, color, posData) {
 		this.eventId = id;
         this.eventType = type;
-        this.eventColor = color;
+        this.color = color;
         this.positionData = posData;
 	}
 
@@ -23,10 +23,15 @@ export class CanvasEvent {
     }
 
     drawEvent(ctx) {
-        ctx.fillStyle = this.eventColor;
+        ctx.fillStyle = this.color;
         switch (this.eventType) {
             case 'pencil':
-                ctx.fillRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
+                ctx.lineWidth = this.positionData.size;
+                ctx.strokeStyle = ctx.fillStyle;
+                ctx.beginPath();
+                ctx.moveTo(this.positionData.startX, this.positionData.startY);
+                ctx.lineTo(this.positionData.endX, this.positionData.endY);
+                ctx.stroke();
                 break;
             case 'eraser':
                 ctx.clearRect(this.positionData.x, this.positionData.y, this.positionData.size, this.positionData.size);
