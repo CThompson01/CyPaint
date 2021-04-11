@@ -74,8 +74,9 @@ export class Tool {
 	 * Method fired when the mouse is released on the canvas
 	 * @param {object} mousePos mouse position
 	 * @param {CanvasRenderingContext2D} ctx canvas context
+	 * @param {number} size the size of the brush
 	 */
-	onMouseUp(mousePos, ctx) {
+	onMouseUp(mousePos, ctx, size) {
 
 	}
 
@@ -83,8 +84,9 @@ export class Tool {
 	 * Method fired when the mouse is move while clicked down on the canvas
 	 * @param {object} mousePos mouse position
 	 * @param {CanvasRenderingContext2D} ctx canvas context
+	 * @param {number} size the size of the brush
 	 */
-	onMouseMove(mousePos, ctx) {
+	onMouseMove(mousePos, ctx, size) {
 		
 	}
 
@@ -92,8 +94,9 @@ export class Tool {
 	 * Method fired when the mouse is clicked down on the canvas
 	 * @param {object} mousePos mouse position
 	 * @param {CanvasRenderingContext2D} ctx canvas context
+	 * @param {number} size the size of the brush
 	 */
-	onMouseDown(mousePos, ctx) {
+	onMouseDown(mousePos, ctx, size) {
 
 	}
 }

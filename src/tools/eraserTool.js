@@ -11,8 +11,8 @@ export class EraserTool extends Tool {
 		this.beginLayerEdit();
 	}
 
-	onMouseMove(mousePos, ctx) {
-		return new CanvasEvent(-1, 'eraser', ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size: 1});
+	onMouseMove(mousePos, ctx, size) {
+		return new CanvasEvent(-1, 'eraser', ctx.fillStyle, {x: mousePos.x, y: mousePos.y, size});
 	}
 
 	onMouseUp(mousePos, ctx) {
