@@ -11,8 +11,9 @@ import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './panels/UndoPanel';
 import { CanvasEvent } from './canvasEvent';
-import { ColorPanel } from "./panels/ColorPanel";
+import { ColorPanel } from './panels/ColorPanel';
 import { SizePanel } from './panels/SizePanel';
+import { PropertiesPanel } from './panels/PropertiesPanel';
 
 /**
  * An instance of each tool
@@ -330,6 +331,10 @@ export function CanvasPage() {
 		});
 	}
 
+	const updateWidthHeight = useCallback((width, height) => {
+		console.log(`TODO - update width=${width} & height=${height}`)
+	}, [])
+
 	return (
 		<div>
 			<div id="canvasPageContainer">
@@ -363,19 +368,24 @@ export function CanvasPage() {
 			</div>
 			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
 			<SizePanel setSize={setSize} />
-			<LayerPanel
-				layers={layerList}
-				selected={activeLayerId}
-				setActiveLayer={setActiveLayerId}
-				createNewLayer={createNewLayer}
-				editLayerName={editLayerName}
-				toggleLayerVisibility={toggleLayerVisibility}
-				toggleLayerLocked={toggleLayerLocked}
-				merge={mergeWithLayerAbove}
-				up={layerUp}
-				down={layerDown}
-				delete={layerDelete} />
-
+			<div style={{display: 'flex', flexDirection: 'row'}}>
+				<LayerPanel
+					layers={layerList}
+					selected={activeLayerId}
+					setActiveLayer={setActiveLayerId}
+					createNewLayer={createNewLayer}
+					editLayerName={editLayerName}
+					toggleLayerVisibility={toggleLayerVisibility}
+					toggleLayerLocked={toggleLayerLocked}
+					merge={mergeWithLayerAbove}
+					up={layerUp}
+					down={layerDown}
+					delete={layerDelete} />
+				<PropertiesPanel
+					width={CANVAS_WIDTH}
+					height={CANVAS_HEIGHT}
+					setDimensions={updateWidthHeight} />
+			</div>
 		</div>
 	);
 }
