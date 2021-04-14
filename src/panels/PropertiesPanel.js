@@ -21,7 +21,7 @@ export const PropertiesPanel = props => {
 			<br />
 			<input type='text' placeholder='Height' defaultValue={props.height} ref={heightInputRef} />
 			<br />
-			<button onClick={() => props.setDimensions(widthInputRef.current.value, heightInputRef.current.value)}>
+			<button onClick={() => props.setDimensions(Number(widthInputRef.current.value), Number(heightInputRef.current.value))}>
 				Set Dimensions
 			</button>
 		</div>
