@@ -1,6 +1,6 @@
 import { mount } from 'enzyme'
 import { ToolIcon } from '../ToolIcon'
-import { TriangleTool } from '../triangleTool'
+import { TriangleTool } from '../tools/triangleTool'
 
 describe('Tool Icon', () => {
 	it('fires callback when clicked', () => {

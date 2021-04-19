@@ -11,8 +11,9 @@ import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './panels/UndoPanel';
 import { CanvasEvent } from './canvasEvent';
-import { ColorPanel } from "./panels/ColorPanel";
+import { ColorPanel } from './panels/ColorPanel';
 import { SizePanel } from './panels/SizePanel';
+import { PropertiesPanel } from './panels/PropertiesPanel';
 
 /**
  * An instance of each tool
@@ -26,8 +27,17 @@ export const tools = [
 	new TextTool()
 ]
 
-const CANVAS_WIDTH = 600;
-const CANVAS_HEIGHT = 400;
+let CANVAS_WIDTH = 600;
+let CANVAS_HEIGHT = 400;
+
+/**
+ * React Hook to provide way for Functional Component to rerender
+ * @returns function that rerenders FC when called
+ */
+const useForceUpdate = () => {
+	const [,setValue] = useState(0)
+	return useCallback(() => setValue(value => value + 1), [])
+}
 
 /**
  * Canvas Page
@@ -41,10 +51,12 @@ export function CanvasPage() {
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const canvasRef = useRef();
+	/** @type {CanvasRenderingContext2D} */
 	const ctx = canvasRef.current?.getContext('2d');
+	const forceUpdate = useForceUpdate()
 
 	/** Draw all layers */
-	const drawAllLayers = (ctx2d, layers) => {
+	const drawAllLayers = () => {
 		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 		for (let i = layerList.length - 1; i >= 0; i--) {
 			if (!layerList[i].visible) continue;
@@ -63,6 +75,7 @@ export function CanvasPage() {
 			}
 		}
 
+		console.log('Drawing all layers')
 		ctx.putImageData(blank, 0, 0);
 	}
 
@@ -72,6 +85,7 @@ export function CanvasPage() {
 		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
 
 		// Subscribe to tool's layer edit callback
+		console.log(`Subscribing to tool ${currentTool.id}`)
 		return currentTool.subscribeToLayerEdits(() => {
 			// Only show active layer
 			ctx.putImageData(activeLayer.imageData, 0, 0);
@@ -80,7 +94,7 @@ export function CanvasPage() {
 			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 			// Show all layers
-			drawAllLayers(ctx, layerList);
+			drawAllLayers();
 		})
 	}, [ctx, currentTool, activeLayerId])
 
@@ -127,7 +141,7 @@ export function CanvasPage() {
 		if (!ctx) return;
 
 		// Show all layers
-		drawAllLayers(ctx, layerList);
+		drawAllLayers();
 	}, [layerList])
 
 	function layerUp(index) {
@@ -330,6 +344,50 @@ export function CanvasPage() {
 		});
 	}
 
+	/**
+	 * Resize a layer
+	 * @param {Layer} layer the layer to resize
+	 */
+	const resizeLayer = layer => {
+		const newImageData = new ImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+		let newDataIdx = 0;
+		for (let y = 0; y < CANVAS_HEIGHT; y++) {
+			for (let x = 0; x < CANVAS_WIDTH; x++) {
+				if (y >= layer.imageData.height || x >= layer.imageData.width) {
+					// New
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx++] = 0;
+				} else {
+					// Copy
+					let oldDataIdx = ((y * layer.imageData.width) + x) * 4;
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx];
+				}
+			}
+		}
+
+		layer.imageData = newImageData;
+	}
+
+	const updateWidthHeight = useCallback((width, height) => {
+		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+		CANVAS_WIDTH = width;
+		CANVAS_HEIGHT = height;
+
+		setLayerList(oldLayerList => {
+			oldLayerList.forEach(resizeLayer)
+			return [...oldLayerList]
+		})
+		
+		console.log(`Canvas resized to ${CANVAS_WIDTH}x${CANVAS_HEIGHT}`)
+		forceUpdate()
+	}, [ctx, forceUpdate])
+
 	return (
 		<div>
 			<div id="canvasPageContainer">
@@ -341,6 +399,7 @@ export function CanvasPage() {
 				<canvas
 					id="mainCanvas"
 					ref={canvasRef}
+					style={{width: CANVAS_WIDTH, height: CANVAS_HEIGHT}}
 					width={CANVAS_WIDTH}
 					height={CANVAS_HEIGHT}
 					onMouseUp={onMouseUp}
@@ -363,19 +422,24 @@ export function CanvasPage() {
 			</div>
 			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
 			<SizePanel setSize={setSize} />
-			<LayerPanel
-				layers={layerList}
-				selected={activeLayerId}
-				setActiveLayer={setActiveLayerId}
-				createNewLayer={createNewLayer}
-				editLayerName={editLayerName}
-				toggleLayerVisibility={toggleLayerVisibility}
-				toggleLayerLocked={toggleLayerLocked}
-				merge={mergeWithLayerAbove}
-				up={layerUp}
-				down={layerDown}
-				delete={layerDelete} />
-
+			<div style={{display: 'flex', flexDirection: 'row'}}>
+				<LayerPanel
+					layers={layerList}
+					selected={activeLayerId}
+					setActiveLayer={setActiveLayerId}
+					createNewLayer={createNewLayer}
+					editLayerName={editLayerName}
+					toggleLayerVisibility={toggleLayerVisibility}
+					toggleLayerLocked={toggleLayerLocked}
+					merge={mergeWithLayerAbove}
+					up={layerUp}
+					down={layerDown}
+					delete={layerDelete} />
+				<PropertiesPanel
+					width={CANVAS_WIDTH}
+					height={CANVAS_HEIGHT}
+					setDimensions={updateWidthHeight} />
+			</div>
 		</div>
 	);
 }

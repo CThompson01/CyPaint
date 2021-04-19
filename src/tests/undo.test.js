@@ -1,6 +1,6 @@
 import { mount } from 'enzyme'
 import { CanvasPage } from '../CanvasPage'
-import { UndoPanel } from '../UndoPanel'
+import { UndoPanel } from '../panels/UndoPanel'
 
 describe('Undo', () => {
     it('Undoes an action', () => {

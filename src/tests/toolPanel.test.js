@@ -1,7 +1,7 @@
 import { mount } from 'enzyme'
 import { CanvasPage } from '../CanvasPage'
 import { ToolIcon } from '../ToolIcon'
-import { ToolPanel } from '../ToolPanel'
+import { ToolPanel } from '../panels/ToolPanel'
 import { tools } from '../CanvasPage'
 
 describe('Tool Panel', () => {
