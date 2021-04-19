@@ -349,7 +349,6 @@ export function CanvasPage() {
 	 * @param {Layer} layer the layer to resize
 	 */
 	const resizeLayer = layer => {
-		console.log(`Layer ${layer.name} resized to ${CANVAS_WIDTH}x${CANVAS_HEIGHT}`)
 		const newImageData = new ImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 		let newDataIdx = 0;
 		for (let y = 0; y < CANVAS_HEIGHT; y++) {
@@ -359,14 +358,14 @@ export function CanvasPage() {
 					newImageData.data[newDataIdx++] = 0;
 					newImageData.data[newDataIdx++] = 0;
 					newImageData.data[newDataIdx++] = 0;
-					newImageData.data[newDataIdx] = 0;
+					newImageData.data[newDataIdx++] = 0;
 				} else {
 					// Copy
 					let oldDataIdx = ((y * layer.imageData.width) + x) * 4;
 					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
 					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
 					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
-					newImageData.data[newDataIdx] = layer.imageData.data[oldDataIdx];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx];
 				}
 			}
 		}
@@ -385,6 +384,7 @@ export function CanvasPage() {
 			return [...oldLayerList]
 		})
 		
+		console.log(`Canvas resized to ${CANVAS_WIDTH}x${CANVAS_HEIGHT}`)
 		forceUpdate()
 	}, [ctx, forceUpdate])
 
