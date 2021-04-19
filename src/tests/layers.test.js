@@ -1,6 +1,6 @@
 import { mount } from 'enzyme'
 import { Layer } from '../layer'
-import { LayerPanel } from '../LayerPanel'
+import { LayerPanel } from '../panels/LayerPanel'
 import { LayerRow } from '../LayerRow'
 
 let layerList = [new Layer('First'), new Layer('Second')]
