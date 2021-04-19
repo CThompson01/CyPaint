@@ -1,4 +1,7 @@
 export class Layer {
+	/**
+	 * @type {string}
+	 */
 	name
 	visible
 
@@ -7,8 +10,16 @@ export class Layer {
 
 	/** Unique identifier of this layer */
 	id
+
+	/**
+	 * @type {ImageData}
+	 */
 	imageData
 
+	/**
+	 * Constructs a new Layer.
+	 * @param {string} name the display name of this layer
+	 */
 	constructor(name) {
 		this.name = name;
 		this.visible = true;
