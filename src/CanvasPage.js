@@ -75,6 +75,7 @@ export function CanvasPage() {
 			}
 		}
 
+		console.log('Drawing all layers')
 		ctx.putImageData(blank, 0, 0);
 	}
 
@@ -84,6 +85,7 @@ export function CanvasPage() {
 		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
 
 		// Subscribe to tool's layer edit callback
+		console.log(`Subscribing to tool ${currentTool.id}`)
 		return currentTool.subscribeToLayerEdits(() => {
 			// Only show active layer
 			ctx.putImageData(activeLayer.imageData, 0, 0);
@@ -342,13 +344,46 @@ export function CanvasPage() {
 		});
 	}
 
+	/**
+	 * Resize a layer
+	 * @param {Layer} layer the layer to resize
+	 */
+	const resizeLayer = layer => {
+		console.log(`Layer ${layer.name} resized to ${CANVAS_WIDTH}x${CANVAS_HEIGHT}`)
+		const newImageData = new ImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
+		let newDataIdx = 0;
+		for (let y = 0; y < CANVAS_HEIGHT; y++) {
+			for (let x = 0; x < CANVAS_WIDTH; x++) {
+				if (y >= layer.imageData.height || x >= layer.imageData.width) {
+					// New
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx++] = 0;
+					newImageData.data[newDataIdx] = 0;
+				} else {
+					// Copy
+					let oldDataIdx = ((y * layer.imageData.width) + x) * 4;
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx++] = layer.imageData.data[oldDataIdx++];
+					newImageData.data[newDataIdx] = layer.imageData.data[oldDataIdx];
+				}
+			}
+		}
+
+		layer.imageData = newImageData;
+	}
+
 	const updateWidthHeight = useCallback((width, height) => {
 		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 		CANVAS_WIDTH = width;
 		CANVAS_HEIGHT = height;
 
-		setLayerList(oldLayerList => [...oldLayerList])
+		setLayerList(oldLayerList => {
+			oldLayerList.forEach(resizeLayer)
+			return [...oldLayerList]
+		})
 		
 		forceUpdate()
 	}, [ctx, forceUpdate])
