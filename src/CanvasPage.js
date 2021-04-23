@@ -6,6 +6,7 @@ import { EraserTool } from './tools/eraserTool';
 import { SquareTool } from './tools/squareTool';
 import { CircleTool } from './tools/circleTool';
 import { TriangleTool } from './tools/triangleTool';
+import { SelectTool } from './tools/selectTool';
 import { TextTool } from './tools/textTool';
 import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
@@ -24,7 +25,8 @@ export const tools = [
 	new SquareTool(),
 	new CircleTool(),
 	new TriangleTool(),
-	new TextTool()
+	new TextTool(),
+	new SelectTool()
 ]
 
 let CANVAS_WIDTH = 600;
@@ -131,7 +133,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		if (mouseDown) {
-			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, redrawEvents);
 			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 				addCanvasEvent(canvasEvent);
 			}
@@ -289,6 +291,13 @@ export function CanvasPage() {
 			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
 		}
 	}, [ctx, canvasEvents])
+
+	function redrawEvents() {
+		if (ctx !== undefined) {
+			ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
+		}
+	}
 
 	function addCanvasEvent(canvasEvent) {
 		setCanvasEvents(oldCanvasEvents => {

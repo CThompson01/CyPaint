@@ -86,7 +86,7 @@ export class Tool {
 	 * @param {CanvasRenderingContext2D} ctx canvas context
 	 * @param {number} size the size of the brush
 	 */
-	onMouseMove(mousePos, ctx, size) {
+	onMouseMove(mousePos, ctx, size, redraw) {
 		
 	}
 
