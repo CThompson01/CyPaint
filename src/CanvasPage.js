@@ -29,13 +29,14 @@ export const tools = [
 
 let CANVAS_WIDTH = 600;
 let CANVAS_HEIGHT = 400;
+let CANVAS_OFFSET = 205;
 
 /**
  * React Hook to provide way for Functional Component to rerender
  * @returns function that rerenders FC when called
  */
 const useForceUpdate = () => {
-	const [,setValue] = useState(0)
+	const [, setValue] = useState(0)
 	return useCallback(() => setValue(value => value + 1), [])
 }
 
@@ -110,7 +111,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(false);
-		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -120,7 +121,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -130,7 +131,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		if (mouseDown) {
-			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 				addCanvasEvent(canvasEvent);
 			}
@@ -383,7 +384,7 @@ export function CanvasPage() {
 			oldLayerList.forEach(resizeLayer)
 			return [...oldLayerList]
 		})
-		
+
 		console.log(`Canvas resized to ${CANVAS_WIDTH}x${CANVAS_HEIGHT}`)
 		forceUpdate()
 	}, [ctx, forceUpdate])
@@ -399,7 +400,7 @@ export function CanvasPage() {
 				<canvas
 					id="mainCanvas"
 					ref={canvasRef}
-					style={{width: CANVAS_WIDTH, height: CANVAS_HEIGHT}}
+					style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
 					width={CANVAS_WIDTH}
 					height={CANVAS_HEIGHT}
 					onMouseUp={onMouseUp}
@@ -422,7 +423,7 @@ export function CanvasPage() {
 			</div>
 			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
 			<SizePanel setSize={setSize} />
-			<div style={{display: 'flex', flexDirection: 'row'}}>
+			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<LayerPanel
 					layers={layerList}
 					selected={activeLayerId}
