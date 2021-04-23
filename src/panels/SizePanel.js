@@ -1,4 +1,7 @@
 import React from 'react';
+import small from '../icons/smDot.png'
+import medium from '../icons/mdDot.png'
+import large from '../icons/lrgDot.png'
 
 export function SizePanel(props) {
 
@@ -8,13 +11,13 @@ export function SizePanel(props) {
 				<tbody>
 					<tr>
 						<td id='small' onClick={() => props.setSize(3)}>
-							<img src='../icons/smDot.png' width='20' height='20'/>
+							<img src={small} width='20' height='20' alt=''/>
 						</td>
 						<td id='medium' onClick={() => props.setSize(9)}>
-							<img src='../icons/mdDot.png' width='20' height='20'/>
+							<img src={medium} width='20' height='20' alt=''/>
 						</td>
 						<td id='large' onClick={() => props.setSize(15)}>
-							<img src='../icons/lrgDot.png' width='20' height='20'/>
+							<img src={large} width='20' height='20' alt=''/>
 						</td>
 					</tr>
 				</tbody>
