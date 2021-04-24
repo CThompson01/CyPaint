@@ -7,6 +7,7 @@ import { SquareTool } from './tools/squareTool';
 import { CircleTool } from './tools/circleTool';
 import { TriangleTool } from './tools/triangleTool';
 import { TextTool } from './tools/textTool';
+import { ColorPickerTool } from './tools/colorPickerTool'
 import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './panels/UndoPanel';
@@ -24,7 +25,8 @@ export const tools = [
 	new SquareTool(),
 	new CircleTool(),
 	new TriangleTool(),
-	new TextTool()
+	new TextTool(),
+	new ColorPickerTool()
 ]
 
 let CANVAS_WIDTH = 600;
