@@ -303,6 +303,7 @@ export function CanvasPage() {
 			const newCanvasEvents = [...oldCanvasEvents];
 			canvasEvent.updateEventId(oldCanvasEvents.length);
 			canvasEvent.interactionNumber = interactionCounter;
+			canvasEvent.layerId = activeLayerId;
 			newCanvasEvents.push(canvasEvent);
 			return newCanvasEvents;
 		});
