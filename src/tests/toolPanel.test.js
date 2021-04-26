@@ -45,4 +45,20 @@ describe('Tool Panel', () => {
 
 		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "triangle.svg", "id": "tool.triangle", "name": "Triangle Tool"})
 	})
+	it('sets triangle to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(5).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "text.svg", "id": "tool.text", "name": "Text Tool"})
+	})
+	it('sets triangle to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(6).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "eyedropper.svg", "id": "tool.eyeDropper", "name": "EyeDropper Tool"})
+	})
 })

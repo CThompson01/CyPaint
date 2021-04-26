@@ -7,6 +7,7 @@ import { SquareTool } from './tools/squareTool';
 import { CircleTool } from './tools/circleTool';
 import { TriangleTool } from './tools/triangleTool';
 import { TextTool } from './tools/textTool';
+import { ColorPickerTool } from './tools/colorPickerTool'
 import { LayerPanel } from './panels/LayerPanel';
 import { Layer } from './layer';
 import { UndoPanel } from './panels/UndoPanel';
@@ -25,11 +26,13 @@ export const tools = [
 	new SquareTool(),
 	new CircleTool(),
 	new TriangleTool(),
-	new TextTool()
+	new TextTool(),
+	new ColorPickerTool()
 ]
 
 let CANVAS_WIDTH = 600;
 let CANVAS_HEIGHT = 400;
+let CANVAS_OFFSET = 205;
 
 /**
  * Canvas Page
@@ -132,7 +135,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(false);
-		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -142,7 +145,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -152,7 +155,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		if (mouseDown) {
-			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - 200, y: e.pageY }, ctx, size);
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 				addCanvasEvent(canvasEvent);
 			}
@@ -376,7 +379,7 @@ export function CanvasPage() {
 				<canvas
 					id="mainCanvas"
 					ref={canvasRef}
-					style={{width: CANVAS_WIDTH, height: CANVAS_HEIGHT}}
+					style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
 					width={CANVAS_WIDTH}
 					height={CANVAS_HEIGHT}
 					onMouseUp={onMouseUp}
@@ -399,7 +402,7 @@ export function CanvasPage() {
 			</div>
 			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
 			<SizePanel setSize={setSize} />
-			<div style={{display: 'flex', flexDirection: 'row'}}>
+			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<LayerPanel
 					layers={layerList}
 					selected={activeLayerId}
