@@ -251,7 +251,6 @@ export function CanvasPage() {
 
 			const newLayerList = [...oldLayerList];
 			newLayerList.push(new Layer(`${Math.floor(Math.random() * 100000)}`));
-			newLayerList[newLayerList.length - 1].imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 
 			return newLayerList;
 		})
@@ -287,18 +286,15 @@ export function CanvasPage() {
 		const removingIdx = layerList.findIndex(layer => layer.id === id);
 		if (removingIdx === 0) return;
 
-		// Copy data from removing layer to previous layer
-		for (let x = 0; x < CANVAS_WIDTH; x++) {
-			for (let y = 0; y < CANVAS_HEIGHT; y++) {
-				let pos = ((y * CANVAS_WIDTH) + x) * 4;
-				if (layerList[removingIdx].imageData.data[pos + 3] > 0) { // If not alpha
-					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos++];
-					layerList[removingIdx - 1].imageData.data[pos] = layerList[removingIdx].imageData.data[pos];
+		setCanvasEvents(oldEvents => {
+			const newEvents = [...oldEvents];
+			newEvents.forEach(newEvent => {
+				if (newEvent.layerId === id) {
+					newEvent.layerId = layerList[removingIdx - 1].id;
 				}
-			}
-		}
+			});
+			return newEvents;
+		})
 
 		layerDelete(removingIdx)
 	}, [layerList, setLayerList])
