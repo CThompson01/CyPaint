@@ -196,14 +196,14 @@ export function CanvasPage() {
 		})
 	}
 
-	function layerDelete(index) {
+	const layerDelete = index => {
+		const layerId = layerList[index].id;
+
+		if (layerList.length === 1) return;
+	
+		// Remove from layer list
 		setLayerList(oldLayerList => {
 			const newLayerList = [...oldLayerList];
-
-			if (oldLayerList.length === 1) {
-				return oldLayerList;
-			}
-
 			newLayerList.splice(index, 1);
 
 			if (oldLayerList[index].id === activeLayerId || newLayerList.length === 1) {
@@ -213,7 +213,13 @@ export function CanvasPage() {
 			}
 
 			return newLayerList;
-		})
+		});
+
+		// Remove from canvas events
+		setCanvasEvents(oldEvents => oldEvents.filter(canvasEvent => canvasEvent.layerId !== layerId))
+
+		// Remove from undo canvas events
+		setUndoneEvents(oldEvents => oldEvents.filter(canvasEvent => canvasEvent.layerId !== layerId))
 	}
 
 	function handleImage(e) {
