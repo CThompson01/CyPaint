@@ -12,11 +12,6 @@ export class Layer {
 	id
 
 	/**
-	 * @type {ImageData}
-	 */
-	imageData
-
-	/**
 	 * Constructs a new Layer.
 	 * @param {string} name the display name of this layer
 	 */

@@ -48,56 +48,84 @@ export function CanvasPage() {
 	const [mouseDown, setMouseDown] = useState(false);
 	const [size, setSize] = useState(3);
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'black', { x: 0, y: 0, width: -10, height: -10 })]);
+	const [canvasEvents, setCanvasEvents] = useState([]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
 	const [interactionCounter, setInteractionCounter] = useState(0)
 	const canvasRef = useRef();
-	/** @type {CanvasRenderingContext2D} */
+	/** @type CanvasRenderingContext2D */
 	const ctx = canvasRef.current?.getContext('2d');
 	const forceUpdate = useForceUpdate()
 
 	/** Draw all layers */
 	const drawAllLayers = () => {
+		const canvasMap = {};
+
+		/**
+		 * @param {number} layerId layer id
+		 * @returns {HTMLCanvasElement} the canvas for this layer
+		 */
+		const getCanvas = layerId => canvasMap[layerId];
+
+		// Loop through all canvas events, drawing each layer, then combining the result
+		canvasEvents.forEach(thisCanvasEvent => {
+			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
+			if (!thisLayer.visible) return;
+
+			// Get canvas for this layer
+			let thisCanvas = getCanvas(thisLayer.id);
+			if (!thisCanvas) {
+				// Make canvas
+				const newCanvas = document.createElement('canvas');
+				newCanvas.width = CANVAS_WIDTH;
+				newCanvas.height = CANVAS_HEIGHT;
+				canvasMap[thisLayer.id] = newCanvas;
+				thisCanvas = newCanvas;
+			}
+
+			// Draw this event onto canvas for this layer
+			thisCanvasEvent.drawEvent(getCanvas(thisLayer.id).getContext('2d'));
+		})
+
+		// Combine the result
 		const blank = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 		for (let i = layerList.length - 1; i >= 0; i--) {
-			if (!layerList[i].visible) continue;
+			const layer = layerList[i];
+			if (!layer.visible) continue;
+			const thisLayerCanvas = getCanvas(layer.id);
+			if (!thisLayerCanvas) continue;
 
-			// Copy data from this layer to `blank`
+			const thisLayerImageData = thisLayerCanvas.getContext('2d').getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
 			for (let x = 0; x < CANVAS_WIDTH; x++) {
 				for (let y = 0; y < CANVAS_HEIGHT; y++) {
 					let pos = ((y * CANVAS_WIDTH) + x) * 4;
-					if (layerList[i].imageData.data[pos + 3] > 0) { // If not alpha
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos++];
-						blank.data[pos] = layerList[i].imageData.data[pos];
+					if (thisLayerImageData.data[pos + 3] > 0) { // If not alpha
+						blank.data[pos] = thisLayerImageData.data[pos++];
+						blank.data[pos] = thisLayerImageData.data[pos++];
+						blank.data[pos] = thisLayerImageData.data[pos++];
+						blank.data[pos] = thisLayerImageData.data[pos];
 					}
 				}
 			}
 		}
 
-		console.log('Drawing all layers')
 		ctx.putImageData(blank, 0, 0);
+
+		// Clear layer canvas map
+		for (const [, value] of Object.entries(canvasMap)) {
+			value.remove();
+		}
 	}
 
 	useEffect(() => {
 		if (!ctx) return;
 
-		const activeLayer = layerList.find(layer => layer.id === activeLayerId);
-
 		// Subscribe to tool's layer edit callback
 		console.log(`Subscribing to tool ${currentTool.id}`)
 		return currentTool.subscribeToLayerEdits(() => {
-			// Only show active layer
-			ctx.putImageData(activeLayer.imageData, 0, 0);
+			// TODO - remove?
 		}, () => {
-			// Load current ctx image data into active layer
-			activeLayer.imageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-			// Show all layers
-			drawAllLayers();
-
 			// Update interaction counter
 			setInteractionCounter(prev => prev + 1)
 		})
@@ -105,11 +133,9 @@ export function CanvasPage() {
 
 	useEffect(() => {
 		if (!!ctx) {
-			// Context loaded for first time. Load empty image data into all layers
-			ctx.putImageData(ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
-			layerList.forEach(layer => layer.imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT));
+			drawAllLayers();
 		}
-	}, [ctx])
+	}, [ctx, canvasEvents, layerList])
 
 	function onMouseUp(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
@@ -141,13 +167,6 @@ export function CanvasPage() {
 			}
 		}
 	}
-
-	useEffect(() => {
-		if (!ctx) return;
-
-		// Show all layers
-		drawAllLayers();
-	}, [layerList])
 
 	function layerUp(index) {
 		if (index === 0) return
@@ -287,25 +306,16 @@ export function CanvasPage() {
 		layerDelete(removingIdx)
 	}, [layerList, setLayerList])
 
-	useEffect(() => {
-		if (ctx !== undefined) {
-			ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
-		}
-	}, [ctx, canvasEvents])
-
 	/**
 	 * Adds a canvas event to a list
 	 * @param {CanvasEvent} canvasEvent the canvas event
 	 */
 	function addCanvasEvent(canvasEvent) {
 		setCanvasEvents(oldCanvasEvents => {
-			const newCanvasEvents = [...oldCanvasEvents];
 			canvasEvent.updateEventId(oldCanvasEvents.length);
 			canvasEvent.interactionNumber = interactionCounter;
 			canvasEvent.layerId = activeLayerId;
-			newCanvasEvents.push(canvasEvent);
-			return newCanvasEvents;
+			return [...oldCanvasEvents, canvasEvent];
 		});
 
 		setUndoneEvents([]);
