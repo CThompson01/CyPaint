@@ -21,12 +21,10 @@ export class TextTool extends Tool {
     input.onkeydown = (e) => {
       var key = e.key;
       if (key === "Enter") {
-        {
-          ctx.textBaseline = "top";
-          ctx.textAlign = "left";
-          ctx.font = font;
-          ctx.fillText(input.value, mousePos.x, mousePos.y);
-        }
+				ctx.textBaseline = "top";
+				ctx.textAlign = "left";
+				ctx.font = font;
+				ctx.fillText(input.value, mousePos.x, mousePos.y);
         document.body.removeChild(input);
         hasInput = false;
       }

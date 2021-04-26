@@ -8,8 +8,20 @@ export class CanvasEvent {
 	/** The color that the event should be */
 	color
 
-	/** The data containing where an event happened and the size of the event */
-	positionData
+    /** The data containing where an event happened and the size of the event */
+    positionData
+		
+		/**
+		 * @type number
+		 * Which interaction this event is a part of
+		 */
+		interactionNumber
+
+		/**
+		 * @type string
+		 * The ID of the layer this modification was applied on
+		 */
+		layerId
 
 	constructor(id, type, color, posData) {
 		this.eventId = id;
