@@ -19,7 +19,7 @@ export class ColorPickerTool extends Tool {
         }else{
             if(r==0 && g == 0 && b == 0 & a ==0){
                 //have to do this otherwise when clicking on transparent area it 
-                //returns transparant black which is unhelpful to draw with so set it to with, the color of the default background
+                //returns transparant black which is unhelpful to draw with so set it to white, the color of the default background
                 r = g = b = a = 255;
             }
             const rgba = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
