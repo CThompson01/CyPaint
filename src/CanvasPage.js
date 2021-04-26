@@ -14,6 +14,7 @@ import { CanvasEvent } from './canvasEvent';
 import { ColorPanel } from './panels/ColorPanel';
 import { SizePanel } from './panels/SizePanel';
 import { PropertiesPanel } from './panels/PropertiesPanel';
+import _ from 'lodash';
 
 /**
  * An instance of each tool
@@ -50,6 +51,7 @@ export function CanvasPage() {
 	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'black', { x: 0, y: 0, width: -10, height: -10 })]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id)
+	const [interactionCounter, setInteractionCounter] = useState(0)
 	const canvasRef = useRef();
 	/** @type {CanvasRenderingContext2D} */
 	const ctx = canvasRef.current?.getContext('2d');
@@ -95,8 +97,11 @@ export function CanvasPage() {
 
 			// Show all layers
 			drawAllLayers();
+
+			// Update interaction counter
+			setInteractionCounter(prev => prev + 1)
 		})
-	}, [ctx, currentTool, activeLayerId])
+	}, [ctx, currentTool, activeLayerId, setInteractionCounter])
 
 	useEffect(() => {
 		if (!!ctx) {
@@ -289,15 +294,20 @@ export function CanvasPage() {
 		}
 	}, [ctx, canvasEvents])
 
+	/**
+	 * Adds a canvas event to a list
+	 * @param {CanvasEvent} canvasEvent the canvas event
+	 */
 	function addCanvasEvent(canvasEvent) {
 		setCanvasEvents(oldCanvasEvents => {
 			const newCanvasEvents = [...oldCanvasEvents];
 			canvasEvent.updateEventId(oldCanvasEvents.length);
+			canvasEvent.interactionNumber = interactionCounter;
 			newCanvasEvents.push(canvasEvent);
 			return newCanvasEvents;
 		});
 
-		setUndoneEvents(oldUndoneEvents => { return [] });
+		setUndoneEvents([]);
 	}
 
 	function undoEvent() {
@@ -305,20 +315,20 @@ export function CanvasPage() {
 			return;
 		}
 
-		var undoneEvent;
+		let undoneEvents = [];
 
-		// Remove the most recent event from the list of canvasEvents
+		// Remove all events of the last interaction number
 		setCanvasEvents(oldCanvasEvents => {
-			const newCanvasEvents = [...oldCanvasEvents];
-			undoneEvent = newCanvasEvents.pop();
+			const interactionToRemove = oldCanvasEvents[oldCanvasEvents.length-1].interactionNumber;
+			const [newCanvasEvents, eventsToUndo] = _.partition(oldCanvasEvents, event => event.interactionNumber !== interactionToRemove)
+			undoneEvents = eventsToUndo;
 			return newCanvasEvents;
 		});
 
 		// Add the undone event to the list of undoneEvents
 		setUndoneEvents(oldUndoneEvents => {
 			const newUndoneEvents = [...oldUndoneEvents];
-			newUndoneEvents.push(undoneEvent);
-			return newUndoneEvents;
+			return newUndoneEvents.concat(undoneEvents)
 		});
 	}
 
@@ -327,20 +337,19 @@ export function CanvasPage() {
 			return;
 		}
 
-		var redoEvent;
+		let redoEvents = [];
 
 		// Remove the most recent undone event from the list of undoneEvents
 		setUndoneEvents(oldUndoneEvents => {
-			const newUndoneEvents = [...oldUndoneEvents];
-			redoEvent = newUndoneEvents.pop();
+			const interactionToRedo = oldUndoneEvents[oldUndoneEvents.length-1].interactionNumber;
+			const [newUndoneEvents, eventsToRedo] = _.partition(oldUndoneEvents, event => event.interactionNumber !== interactionToRedo);
+			redoEvents = eventsToRedo;
 			return newUndoneEvents;
 		});
 
 		// Add the redone event to the list of canvasEvents
 		setCanvasEvents(oldCanvasEvents => {
-			const newCanvasEvents = [...oldCanvasEvents];
-			newCanvasEvents.push(redoEvent);
-			return newCanvasEvents;
+			return oldCanvasEvents.concat(redoEvents);
 		});
 	}
 

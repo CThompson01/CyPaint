@@ -1,6 +1,6 @@
 export class CanvasEvent {
     /** The point at which the event occurred */
-	eventId
+		eventId
 
     /** The type of event that is occurring (e.g. drawTriangle, drawLine, eraser) */
     eventType
@@ -10,6 +10,18 @@ export class CanvasEvent {
 
     /** The data containing where an event happened and the size of the event */
     positionData
+		
+		/**
+		 * @type number
+		 * Which interaction this event is a part of
+		 */
+		interactionNumber
+
+		/**
+		 * @type string
+		 * The ID of the layer this modification was applied on
+		 */
+		layerId
 
 	constructor(id, type, color, posData) {
 		this.eventId = id;
