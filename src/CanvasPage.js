@@ -48,6 +48,7 @@ export function CanvasPage() {
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [canvasEvents, setCanvasEvents] = useState([]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
+	const [selectedArea, setSelectedArea] = useState({startLocation: {x: -1, y: -1}, endLocation: {x: -1, y: -1}});
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id);
 	const [interactionCounter, setInteractionCounter] = useState(0);
 	const [resizeCounter, setResizeCounter] = useState(0);
@@ -135,12 +136,28 @@ export function CanvasPage() {
 		}
 	}, [ctx, canvasEvents, layerList, resizeCounter])
 
+	function redrawEvents() {
+		if (!!ctx) {
+			drawAllLayers();
+		}
+	}
+
 	function onMouseUp(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(false);
 		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
+			if (canvasEvent.eventType === 'select') {
+				setSelectedArea(canvasEvent.positionData);
+			} else if (canvasEvent.eventType === 'translate') {
+				let newSelX = canvasEvent.positionData.mousePos.x;
+				let newSelY = canvasEvent.positionData.mousePos.y;
+				let width = canvasEvent.positionData.selArea.startLocation.x - canvasEvent.positionData.selArea.endLocation.x;
+				let height = canvasEvent.positionData.selArea.startLocation.y - canvasEvent.positionData.selArea.endLocation.y;
+				setSelectedArea({startLocation: {x: newSelX, y: newSelY}, endLocation: {x: newSelX + width, y: newSelY + height}});
+			}
+			
 			addCanvasEvent(canvasEvent);
 		}
 	}
@@ -149,7 +166,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, selectedArea);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -306,19 +323,12 @@ export function CanvasPage() {
 		layerDelete(removingIdx)
 	}, [layerList, setLayerList])
 
-	useEffect(() => {
-		if (ctx !== undefined) {
-			ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
-		}
-	}, [ctx, canvasEvents])
-
-	function redrawEvents() {
-		if (ctx !== undefined) {
-			ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-			canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
-		}
-	}
+	// useEffect(() => {
+	// 	if (ctx !== undefined) {
+	// 		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	// 		canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
+	// 	}
+	// }, [ctx, canvasEvents])
 
 	/**
 	 * Adds a canvas event to a list

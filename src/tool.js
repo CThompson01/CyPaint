@@ -95,8 +95,9 @@ export class Tool {
 	 * @param {object} mousePos mouse position
 	 * @param {CanvasRenderingContext2D} ctx canvas context
 	 * @param {number} size the size of the brush
+	 * @param {{number, number}} selectedArea
 	 */
-	onMouseDown(mousePos, ctx, size) {
+	onMouseDown(mousePos, ctx, size, selectedArea) {
 
 	}
 }
