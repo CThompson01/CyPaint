@@ -68,6 +68,12 @@ export class CanvasEvent {
 					this.positionData.selArea.width, this.positionData.selArea.height);
 				ctx.putImageData(this.positionData.imgData, this.positionData.mousePos.x, this.positionData.mousePos.y);
 				break;
+			case 'text':
+				ctx.textBaseline = "top";
+				ctx.textAlign = "left";
+				ctx.font = this.positionData.font;
+				ctx.fillText(this.positionData.value, this.positionData.x, this.positionData.y);
+				break;
 		}
 	}
 }
