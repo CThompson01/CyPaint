@@ -117,6 +117,43 @@ export function CanvasPage() {
 		}
 	}
 
+	const drawCurrentLayer = () => {
+		const canvasMap = {};
+
+		/**
+		 * @param {number} layerId layer id
+		 * @returns {HTMLCanvasElement} the canvas for this layer
+		 */
+		const getCanvas = layerId => canvasMap[layerId];
+
+		// Loop through all canvas events, drawing each layer, then combining the result
+		canvasEvents.forEach(thisCanvasEvent => {
+			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
+			if (!thisLayer.visible) return;
+
+			// Get canvas for this layer
+			let thisCanvas = getCanvas(thisLayer.id);
+			if (!thisCanvas) {
+				// Make canvas
+				const newCanvas = document.createElement('canvas');
+				newCanvas.width = CANVAS_WIDTH;
+				newCanvas.height = CANVAS_HEIGHT;
+				canvasMap[thisLayer.id] = newCanvas;
+				thisCanvas = newCanvas;
+			}
+
+			// Draw this event onto canvas for this layer
+			thisCanvasEvent.drawEvent(getCanvas(thisLayer.id).getContext('2d'));
+		})
+
+		ctx.putImageData(getCanvas(activeLayerId).getContext('2d').getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
+
+		// Clear layer canvas map
+		for (const [, value] of Object.entries(canvasMap)) {
+			value.remove();
+		}
+	}
+
 	useEffect(() => {
 		if (!ctx) return;
 
@@ -138,7 +175,7 @@ export function CanvasPage() {
 
 	function redrawEvents() {
 		if (!!ctx) {
-			drawAllLayers();
+			drawCurrentLayer();
 		}
 	}
 
@@ -166,7 +203,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, selectedArea);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, redrawEvents, selectedArea);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}

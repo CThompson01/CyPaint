@@ -97,7 +97,7 @@ export class Tool {
 	 * @param {number} size the size of the brush
 	 * @param {{number, number}} selectedArea
 	 */
-	onMouseDown(mousePos, ctx, size, selectedArea) {
+	onMouseDown(mousePos, ctx, size, redraw, selectedArea) {
 
 	}
 }

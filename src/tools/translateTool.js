@@ -11,8 +11,9 @@ export class TranslateTool extends Tool {
 	name = 'Translate Tool'
 	id = 'tool.translate'
 
-	onMouseDown(mousePos, ctx, size, selectedArea) {
+	onMouseDown(mousePos, ctx, size, redraw, selectedArea) {
 		// startLocation = {x: mousePos.x, y: mousePos.y};
+		redraw();
 		selArea = selectedArea;
 		imgData = ctx.getImageData(selArea.startLocation.x, selArea.startLocation.y, selArea.endLocation.x, selArea.endLocation.y);
 		this.beginLayerEdit();
