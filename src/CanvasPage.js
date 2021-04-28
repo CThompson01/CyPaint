@@ -118,41 +118,16 @@ export function CanvasPage() {
 	}
 
 	const drawCurrentLayer = () => {
-		const canvasMap = {};
-
-		/**
-		 * @param {number} layerId layer id
-		 * @returns {HTMLCanvasElement} the canvas for this layer
-		 */
-		const getCanvas = layerId => canvasMap[layerId];
-
+		ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		// Loop through all canvas events, drawing each layer, then combining the result
 		canvasEvents.forEach(thisCanvasEvent => {
 			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
 			if (!thisLayer) return;
-			if (!thisLayer.visible) return;
-
-			// Get canvas for this layer
-			let thisCanvas = getCanvas(thisLayer.id);
-			if (!thisCanvas) {
-				// Make canvas
-				const newCanvas = document.createElement('canvas');
-				newCanvas.width = CANVAS_WIDTH;
-				newCanvas.height = CANVAS_HEIGHT;
-				canvasMap[thisLayer.id] = newCanvas;
-				thisCanvas = newCanvas;
-			}
+			if (!thisLayer.visible || thisCanvasEvent.layerId !== activeLayerId) return;
 
 			// Draw this event onto canvas for this layer
-			thisCanvasEvent.drawEvent(getCanvas(thisLayer.id).getContext('2d'));
+			thisCanvasEvent.drawEvent(ctx);
 		})
-
-		ctx.putImageData(getCanvas(activeLayerId).getContext('2d').getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
-
-		// Clear layer canvas map
-		for (const [, value] of Object.entries(canvasMap)) {
-			value.remove();
-		}
 	}
 
 	useEffect(() => {
