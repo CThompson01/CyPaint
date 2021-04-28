@@ -1,7 +1,8 @@
+import { CanvasEvent } from '../canvasEvent'
 import select from '../icons/select.png'
 import { Tool } from '../tool'
 
-var startLocation = {x: -1, y: -1};
+var startLocation = { x: -1, y: -1 };
 
 export class SelectTool extends Tool {
 	icon = select
@@ -9,15 +10,11 @@ export class SelectTool extends Tool {
 	id = 'tool.select'
 
 	onMouseDown(mousePos, ctx) {
-		startLocation = {x: mousePos.x, y: mousePos.y};
+		startLocation = { x: mousePos.x, y: mousePos.y };
 		this.beginLayerEdit();
 	}
 
 	onMouseMove(mousePos, ctx, size, redraw) {
-		// let canvasEvent = new CanvasEvent(-1, "pencil", ctx.fillStyle, 
-		// 	{startX: previousLocation.x, startY: previousLocation.y, endX: mousePos.x, endY: mousePos.y, size});
-		// previousLocation = {x: mousePos.x, y: mousePos.y};
-		// return canvasEvent;
 		redraw();
 		ctx.beginPath();
 		ctx.rect(startLocation.x, startLocation.y, mousePos.x - startLocation.x, mousePos.y - startLocation.y);
@@ -25,7 +22,9 @@ export class SelectTool extends Tool {
 	}
 
 	onMouseUp(mousePos, ctx) {
-		startLocation = {x: -1, y: -1};
+		let event = new CanvasEvent(-1, 'select', ctx.fillStyle, { startLocation, endLocation: { x: mousePos.x, y: mousePos.y } });
+		startLocation = { x: -1, y: -1 };
 		this.endLayerEdit();
+		return event;
 	}
 }

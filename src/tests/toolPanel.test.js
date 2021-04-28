@@ -54,4 +54,13 @@ describe('Tool Panel', () => {
 
 		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "select.png", "id": "tool.select", "name": "Select Tool"})
 	})
+
+	it ('sets translate to active tool', () => {
+		const setCurrentTool = jest.fn()
+		const wrapper = mount(<ToolPanel currentTool={tools[0]} toolList={tools} setCurrentTool={setCurrentTool} />)
+		
+		wrapper.find(ToolIcon).at(7).find('div').prop('onClick')()
+
+		expect(setCurrentTool).toHaveBeenCalledWith({"icon": "translate.png", "id": "tool.translate", "name": "Translate Tool"})
+	})
 })
