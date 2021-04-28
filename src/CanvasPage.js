@@ -170,6 +170,7 @@ export function CanvasPage() {
 					width: canvasEvent.positionData.selArea.width, height: canvasEvent.positionData.selArea.height});
 			}
 			
+			canvasEvent.color = ctx.fillStyle;
 			addCanvasEvent(canvasEvent);
 		}
 	}
@@ -440,7 +441,10 @@ export function CanvasPage() {
 						canvasEventsList={canvasEvents} />
 				</div>
 			</div>
-			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />
+			<ColorPanel setColor={(color) => {
+				ctx.fillStyle = color;
+				ctx.strokeStyle = color;
+			}} />
 			<SizePanel setSize={setSize} />
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<LayerPanel

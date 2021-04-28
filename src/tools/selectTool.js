@@ -16,9 +16,13 @@ export class SelectTool extends Tool {
 
 	onMouseMove(mousePos, ctx, size, redraw) {
 		redraw();
+		ctx.strokeStyle = 'black';
 		ctx.beginPath();
+		ctx.lineWidth = 3;
 		ctx.rect(startLocation.x, startLocation.y, mousePos.x - startLocation.x, mousePos.y - startLocation.y);
 		ctx.stroke();
+		ctx.lineWidth = size;
+
 	}
 
 	onMouseUp(mousePos, ctx) {

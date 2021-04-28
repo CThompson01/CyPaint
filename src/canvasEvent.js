@@ -36,6 +36,7 @@ export class CanvasEvent {
 
 	drawEvent(ctx) {
 		ctx.fillStyle = this.color;
+		ctx.strokeStyle = this.color;
 		switch (this.eventType) {
 			case 'pencil':
 				ctx.lineWidth = this.positionData.size;

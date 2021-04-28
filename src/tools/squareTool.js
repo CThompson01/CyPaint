@@ -25,7 +25,9 @@ export class SquareTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx, size, redraw) {
+		let color = ctx.fillStyle;
 		redraw();
+		ctx.fillStyle = color;
 		ctx.fillRect(originPoint[0], originPoint[1], mousePos.x - originPoint[0], mousePos.y - originPoint[1]);
 	}
 

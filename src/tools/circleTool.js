@@ -20,7 +20,9 @@ export class CircleTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx, size, redraw) {
+		let color = ctx.fillStyle;
 		redraw();
+		ctx.fillStyle = color;
 		const radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2));
 		ctx.beginPath();
 		ctx.arc(originPoint[0], originPoint[1], radius, 0, 2 * Math.PI);

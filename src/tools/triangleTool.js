@@ -21,7 +21,9 @@ export class TriangleTool extends Tool {
 	}
 
 	onMouseMove(mousePos, ctx, size, redraw) {
+		let color = ctx.fillStyle;
 		redraw();
+		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.moveTo(markers.startX, markers.top);
 		ctx.lineTo(markers.startX, mousePos.y);
