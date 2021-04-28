@@ -6,6 +6,8 @@ import { EraserTool } from './tools/eraserTool';
 import { SquareTool } from './tools/squareTool';
 import { CircleTool } from './tools/circleTool';
 import { TriangleTool } from './tools/triangleTool';
+import { SelectTool } from './tools/selectTool';
+import { TranslateTool } from './tools/translateTool';
 import { TextTool } from './tools/textTool';
 import { ColorPickerTool } from './tools/colorPickerTool'
 import { LayerPanel } from './panels/LayerPanel';
@@ -27,6 +29,8 @@ export const tools = [
 	new CircleTool(),
 	new TriangleTool(),
 	new TextTool(),
+	new SelectTool(),
+	new TranslateTool(),
 	new ColorPickerTool()
 ]
 
@@ -44,6 +48,7 @@ export function CanvasPage() {
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [canvasEvents, setCanvasEvents] = useState([]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
+	const [selectedArea, setSelectedArea] = useState({startLocation: {x: -1, y: -1}, width: -1, height: -1});
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id);
 	const [interactionCounter, setInteractionCounter] = useState(0);
 	const [resizeCounter, setResizeCounter] = useState(0);
@@ -112,6 +117,43 @@ export function CanvasPage() {
 		}
 	}
 
+	const drawCurrentLayer = () => {
+		const canvasMap = {};
+
+		/**
+		 * @param {number} layerId layer id
+		 * @returns {HTMLCanvasElement} the canvas for this layer
+		 */
+		const getCanvas = layerId => canvasMap[layerId];
+
+		// Loop through all canvas events, drawing each layer, then combining the result
+		canvasEvents.forEach(thisCanvasEvent => {
+			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
+			if (!thisLayer.visible) return;
+
+			// Get canvas for this layer
+			let thisCanvas = getCanvas(thisLayer.id);
+			if (!thisCanvas) {
+				// Make canvas
+				const newCanvas = document.createElement('canvas');
+				newCanvas.width = CANVAS_WIDTH;
+				newCanvas.height = CANVAS_HEIGHT;
+				canvasMap[thisLayer.id] = newCanvas;
+				thisCanvas = newCanvas;
+			}
+
+			// Draw this event onto canvas for this layer
+			thisCanvasEvent.drawEvent(getCanvas(thisLayer.id).getContext('2d'));
+		})
+
+		ctx.putImageData(getCanvas(activeLayerId).getContext('2d').getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
+
+		// Clear layer canvas map
+		for (const [, value] of Object.entries(canvasMap)) {
+			value.remove();
+		}
+	}
+
 	useEffect(() => {
 		if (!ctx) return;
 
@@ -131,12 +173,27 @@ export function CanvasPage() {
 		}
 	}, [ctx, canvasEvents, layerList, resizeCounter])
 
+	function redrawEvents() {
+		if (!!ctx) {
+			drawCurrentLayer();
+		}
+	}
+
 	function onMouseUp(e) {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(false);
 		var canvasEvent = currentTool.onMouseUp({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
+			if (canvasEvent.eventType === 'select') {
+				setSelectedArea(canvasEvent.positionData);
+			} else if (canvasEvent.eventType === 'translate') {
+				let newSelX = canvasEvent.positionData.mousePos.x;
+				let newSelY = canvasEvent.positionData.mousePos.y;
+				setSelectedArea({startLocation: {x: newSelX, y: newSelY}, 
+					width: canvasEvent.positionData.selArea.width, height: canvasEvent.positionData.selArea.height});
+			}
+			
 			addCanvasEvent(canvasEvent);
 		}
 	}
@@ -145,7 +202,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		setMouseDown(true);
-		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
+		var canvasEvent = currentTool.onMouseDown({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, redrawEvents, selectedArea);
 		if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 			addCanvasEvent(canvasEvent);
 		}
@@ -155,7 +212,7 @@ export function CanvasPage() {
 		if (layerList.find(layer => layer.id === activeLayerId).locked) return;
 
 		if (mouseDown) {
-			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size);
+			var canvasEvent = currentTool.onMouseMove({ x: e.pageX - CANVAS_OFFSET, y: e.pageY }, ctx, size, redrawEvents);
 			if (canvasEvent !== -1 && canvasEvent !== null && canvasEvent !== undefined) {
 				addCanvasEvent(canvasEvent);
 			}
@@ -301,6 +358,13 @@ export function CanvasPage() {
 
 		layerDelete(removingIdx)
 	}, [layerList, setLayerList])
+
+	// useEffect(() => {
+	// 	if (ctx !== undefined) {
+	// 		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	// 		canvasEvents.forEach(cEvent => cEvent.drawEvent(ctx));
+	// 	}
+	// }, [ctx, canvasEvents])
 
 	/**
 	 * Adds a canvas event to a list

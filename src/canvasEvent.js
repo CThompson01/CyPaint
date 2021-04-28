@@ -63,6 +63,11 @@ export class CanvasEvent {
 				ctx.lineTo(this.positionData.endX, this.positionData.bottom);
 				ctx.fill();
 				break;
+			case 'translate':
+				ctx.clearRect(this.positionData.selArea.startLocation.x, this.positionData.selArea.startLocation.y, 
+					this.positionData.selArea.width, this.positionData.selArea.height);
+				ctx.putImageData(this.positionData.imgData, this.positionData.mousePos.x, this.positionData.mousePos.y);
+				break;
 		}
 	}
 }
