@@ -46,7 +46,7 @@ export function CanvasPage() {
 	const [mouseDown, setMouseDown] = useState(false);
 	const [size, setSize] = useState(3);
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
-	const [canvasEvents, setCanvasEvents] = useState([]);
+	const [canvasEvents, setCanvasEvents] = useState([new CanvasEvent(0, 'square', 'red', {x: -1, y: -1, width: -10, height: -10})]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
 	const [selectedArea, setSelectedArea] = useState({startLocation: {x: -1, y: -1}, width: -1, height: -1});
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id);
@@ -55,7 +55,6 @@ export function CanvasPage() {
 	const canvasRef = useRef();
 	/** @type CanvasRenderingContext2D */
 	const ctx = canvasRef.current?.getContext('2d');
-
 	/** Draw all layers */
 	const drawAllLayers = () => {
 		const canvasMap = {};
@@ -69,6 +68,7 @@ export function CanvasPage() {
 		// Loop through all canvas events, drawing each layer, then combining the result
 		canvasEvents.forEach(thisCanvasEvent => {
 			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
+			if (!thisLayer) return;
 			if (!thisLayer.visible) return;
 
 			// Get canvas for this layer
@@ -118,40 +118,16 @@ export function CanvasPage() {
 	}
 
 	const drawCurrentLayer = () => {
-		const canvasMap = {};
-
-		/**
-		 * @param {number} layerId layer id
-		 * @returns {HTMLCanvasElement} the canvas for this layer
-		 */
-		const getCanvas = layerId => canvasMap[layerId];
-
+		ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 		// Loop through all canvas events, drawing each layer, then combining the result
 		canvasEvents.forEach(thisCanvasEvent => {
 			const thisLayer = layerList.find(layer => layer.id === thisCanvasEvent.layerId);
-			if (!thisLayer.visible) return;
-
-			// Get canvas for this layer
-			let thisCanvas = getCanvas(thisLayer.id);
-			if (!thisCanvas) {
-				// Make canvas
-				const newCanvas = document.createElement('canvas');
-				newCanvas.width = CANVAS_WIDTH;
-				newCanvas.height = CANVAS_HEIGHT;
-				canvasMap[thisLayer.id] = newCanvas;
-				thisCanvas = newCanvas;
-			}
+			if (!thisLayer) return;
+			if (!thisLayer.visible || thisCanvasEvent.layerId !== activeLayerId) return;
 
 			// Draw this event onto canvas for this layer
-			thisCanvasEvent.drawEvent(getCanvas(thisLayer.id).getContext('2d'));
+			thisCanvasEvent.drawEvent(ctx);
 		})
-
-		ctx.putImageData(getCanvas(activeLayerId).getContext('2d').getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), 0, 0);
-
-		// Clear layer canvas map
-		for (const [, value] of Object.entries(canvasMap)) {
-			value.remove();
-		}
 	}
 
 	useEffect(() => {
@@ -461,7 +437,7 @@ export function CanvasPage() {
 					<UndoPanel
 						undo={undoEvent}
 						redo={redoEvent}
-						canvasEventsList={`canvasEvents`} />
+						canvasEventsList={canvasEvents} />
 				</div>
 			</div>
 			<ColorPanel setColor={(color) => { ctx.fillStyle = color }} />

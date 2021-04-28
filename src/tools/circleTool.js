@@ -15,15 +15,23 @@ export class CircleTool extends Tool {
 	}
 
 	onMouseDown(mousePos, ctx) {
-		if (originPoint[0] === -1) {
-			originPoint = [mousePos.x, mousePos.y]
-			this.beginLayerEdit();
-		} else {
-			const radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2))
-			var canvasEvent = new CanvasEvent(-1, 'circle', ctx.fillStyle, {x: originPoint[0], y: originPoint[1], size: radius});
-			originPoint = [-1,-1]
-			this.endLayerEdit();
-			return canvasEvent;
-		}
+		originPoint = [mousePos.x, mousePos.y]
+		this.beginLayerEdit();
+	}
+
+	onMouseMove(mousePos, ctx, size, redraw) {
+		redraw();
+		const radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2));
+		ctx.beginPath();
+		ctx.arc(originPoint[0], originPoint[1], radius, 0, 2 * Math.PI);
+		ctx.fill();
+	}
+
+	onMouseUp(mousePos, ctx) {
+		const radius = Math.sqrt(Math.pow(mousePos.x - originPoint[0], 2) + Math.pow(mousePos.y - originPoint[1], 2));
+		let canvasEvent = new CanvasEvent(-1, 'circle', ctx.fillStyle, {x: originPoint[0], y: originPoint[1], size: radius});
+		originPoint = [-1,-1]
+		this.endLayerEdit();
+		return canvasEvent;
 	}
 }
