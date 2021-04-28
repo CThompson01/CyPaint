@@ -22,7 +22,8 @@ export class SelectTool extends Tool {
 	}
 
 	onMouseUp(mousePos, ctx) {
-		let event = new CanvasEvent(-1, 'select', ctx.fillStyle, { startLocation, endLocation: { x: mousePos.x, y: mousePos.y } });
+		let event = new CanvasEvent(-1, 'select', ctx.fillStyle, 
+			{ startLocation, width: mousePos.x - startLocation.x, height: mousePos.y - startLocation.y });
 		startLocation = { x: -1, y: -1 };
 		this.endLayerEdit();
 		return event;

@@ -48,7 +48,7 @@ export function CanvasPage() {
 	const [layerList, setLayerList] = useState([new Layer('First'), new Layer('Second')]);
 	const [canvasEvents, setCanvasEvents] = useState([]);
 	const [undoneEvents, setUndoneEvents] = useState([]);
-	const [selectedArea, setSelectedArea] = useState({startLocation: {x: -1, y: -1}, endLocation: {x: -1, y: -1}});
+	const [selectedArea, setSelectedArea] = useState({startLocation: {x: -1, y: -1}, width: -1, height: -1});
 	const [activeLayerId, setActiveLayerId] = useState(layerList[0].id);
 	const [interactionCounter, setInteractionCounter] = useState(0);
 	const [resizeCounter, setResizeCounter] = useState(0);
@@ -190,9 +190,8 @@ export function CanvasPage() {
 			} else if (canvasEvent.eventType === 'translate') {
 				let newSelX = canvasEvent.positionData.mousePos.x;
 				let newSelY = canvasEvent.positionData.mousePos.y;
-				let width = canvasEvent.positionData.selArea.startLocation.x - canvasEvent.positionData.selArea.endLocation.x;
-				let height = canvasEvent.positionData.selArea.startLocation.y - canvasEvent.positionData.selArea.endLocation.y;
-				setSelectedArea({startLocation: {x: newSelX, y: newSelY}, endLocation: {x: newSelX + width, y: newSelY + height}});
+				setSelectedArea({startLocation: {x: newSelX, y: newSelY}, 
+					width: canvasEvent.positionData.selArea.width, height: canvasEvent.positionData.selArea.height});
 			}
 			
 			addCanvasEvent(canvasEvent);

@@ -65,7 +65,7 @@ export class CanvasEvent {
 				break;
 			case 'translate':
 				ctx.clearRect(this.positionData.selArea.startLocation.x, this.positionData.selArea.startLocation.y, 
-					this.positionData.selArea.endLocation.x, this.positionData.selArea.endLocation.y);
+					this.positionData.selArea.width, this.positionData.selArea.height);
 				ctx.putImageData(this.positionData.imgData, this.positionData.mousePos.x, this.positionData.mousePos.y);
 				break;
 		}
